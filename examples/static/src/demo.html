@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+      html, body {
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      canvas {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid white;
+        background-color: #222831;
+      }
+
+      #scores-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #222831;
+        color: white;
+        font-size: 18px;
+      }
+
+      #scores-text {
+        display: block;
+        width: 100%;
+        transform: translateX(100%);
+        animation: scores-anim 15s linear infinite;
+        margin: 15px;
+      }
+
+      @keyframes scores-anim {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(-100%);
+        }
+      }
+    </style>
+</head>
+<body>
+<div id="scores-container"></div>
+<canvas width="400" height="400" id="game" style="visibility: hidden;"></canvas>
+<script type="text/javascript">
+      (function () {
+        var hasFocus = false;
+
+        var scoreRequirement = 0;
+
+        window.addEventListener('focus', function () {
+          hasFocus = true;
+          canvas.style.visibility = '';
+          requestAnimationFrame(gameLoop);
+        });
+
+        window.addEventListener('blur', function () {
+          hasFocus = false;
+          canvas.style.visibility = 'hidden';
+        });
+
+        /* Server -> Client */
+        window.addEventListener('message', function (event) {
+          var data = event.data;
+
+          if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            return;
+          }
+
+          if (data.type === 'updateScore') {
+            var scoresContainer = document.getElementById('scores-container');
+
+            var numScores = data.scores.length;
+            if (numScores > 0) {
+              scoreRequirement = data.scores[numScores - 1].score;
+
+              var scoresHTML = '<span id="scores-text">';
+
+              for (var iii = 0; iii < numScores; ++iii) {
+                var score = data.scores[iii];
+
+                scoresHTML += (iii + 1) + '. ' + score.playerName + ': ' + score.score;
+
+                if (iii != numScores - 1) {
+                  scoresHTML += ' | ';
+                }
+              }
+
+              scoresHTML += '</span>';
+              scoresContainer.innerHTML = scoresHTML;
+            } else {
+              scoreRequirement = 0;
+              scoresContainer.innerHTML = '';
+            }
+          }
+        });
+
+        /* Client -> Server */
+        function submitScore(score) {
+          if (score > scoreRequirement) {
+            fetch('https://' + window.resourceName + '/submitScore', {
+              method: 'POST',
+              body: score,
+            });
+          }
+        }
+
+        var canvas = document.getElementById('game');
+        var context = canvas.getContext('2d');
+
+        var grid = 16;
+        var lastUpdate = 0;
+
+        var snake = {
+          x: 160,
+          y: 160,
+          dx: grid,
+          dy: 0,
+          cells: [],
+          maxCells: 4,
+        };
+
+        var apple = {
+          x: 320,
+          y: 320,
+        };
+
+        // @see https://stackoverflow.com/a/1527820/2124254
+        function getRandomInt(min, max) {
+          return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        function gameLoop(timestamp) {
+          if (!hasFocus) {
+            return;
+          }
+
+          if (timestamp - lastUpdate >= 1000 / 15) {
+            drawGame();
+            lastUpdate = timestamp;
+          }
+
+          requestAnimationFrame(gameLoop);
+        }
+
+        // @see https://gist.github.com/ZiKT1229/5935a10ce818ea7b851ea85ecf55b4da
+        function drawGame() {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+
+          snake.x += snake.dx;
+          snake.y += snake.dy;
+
+          if (snake.x < 0) {
+            snake.x = canvas.width - grid;
+          } else if (snake.x >= canvas.width) {
+            snake.x = 0;
+          }
+
+          if (snake.y < 0) {
+            snake.y = canvas.height - grid;
+          } else if (snake.y >= canvas.height) {
+            snake.y = 0;
+          }
+
+          snake.cells.unshift({ x: snake.x, y: snake.y });
+
+          if (snake.cells.length > snake.maxCells) {
+            snake.cells.pop();
+          }
+
+          context.fillStyle = 'red';
+          context.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+          context.fillStyle = 'green';
+          snake.cells.forEach(function (cell, index) {
+            context.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+
+            if (cell.x === apple.x && cell.y === apple.y) {
+              snake.maxCells++;
+              newApple();
+            }
+
+            for (var iii = index + 1; iii < snake.cells.length; iii++) {
+              if (cell.x === snake.cells[iii].x && cell.y === snake.cells[iii].y) {
+                endGame();
+                break;
+              }
+            }
+          });
+
+          context.fillStyle = 'white';
+          context.fillText('Score: ' + getScore(), 1, canvas.height - 2);
+        }
+
+        function newApple() {
+          apple.x = getRandomInt(0, 25) * grid;
+          apple.y = getRandomInt(0, 25) * grid;
+        }
+
+        function resetGame() {
+          snake.x = 160;
+          snake.y = 160;
+          snake.cells = [];
+          snake.maxCells = 4;
+          snake.dx = grid;
+          snake.dy = 0;
+          newApple();
+        }
+
+        function getScore() {
+          return snake.maxCells - 4;
+        }
+
+        function endGame() {
+          submitScore(getScore());
+          resetGame();
+        }
+
+        document.addEventListener('keydown', function (event) {
+          if (event.which === 37 && snake.dx === 0) {
+            snake.dx = -grid;
+            snake.dy = 0;
+          } else if (event.which === 38 && snake.dy === 0) {
+            snake.dy = -grid;
+            snake.dx = 0;
+          } else if (event.which === 39 && snake.dx === 0) {
+            snake.dx = grid;
+            snake.dy = 0;
+          } else if (event.which === 40 && snake.dy === 0) {
+            snake.dy = grid;
+            snake.dx = 0;
+          }
+        });
+      })();
+    </script>
+</body>
+</html>

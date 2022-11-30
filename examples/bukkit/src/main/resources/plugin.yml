@@ -1,0 +1,10 @@
+name: FeatherServerAPIExample
+version: 0.0.1-SNAPSHOT
+description: ""
+author: Feather
+website: https://feathermc.com
+main: net.digitalingot.feather.serverapi.examples.bukkit.ExamplePlugin
+depend: [FeatherServerAPI]
+
+commands:
+  snake: {}

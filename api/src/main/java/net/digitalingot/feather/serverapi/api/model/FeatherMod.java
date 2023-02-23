@@ -1,7 +1,8 @@
 package net.digitalingot.feather.serverapi.api.model;
 
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class FeatherMod {
   @NotNull public final String name;
@@ -12,7 +13,7 @@ public class FeatherMod {
 
   @NotNull
   public String getName() {
-    return name;
+    return this.name;
   }
 
   @Override
@@ -24,11 +25,11 @@ public class FeatherMod {
       return false;
     }
     FeatherMod that = (FeatherMod) other;
-    return name.equals(that.name);
+    return this.name.equals(that.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(this.name);
   }
 }

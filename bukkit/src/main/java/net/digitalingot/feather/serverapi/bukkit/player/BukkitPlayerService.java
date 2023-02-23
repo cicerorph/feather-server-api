@@ -1,29 +1,34 @@
 package net.digitalingot.feather.serverapi.bukkit.player;
 
+import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
+import net.digitalingot.feather.serverapi.api.player.PlayerService;
+import net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin;
+import net.digitalingot.feather.serverapi.bukkit.event.player.FeatherPlayerQuitEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.PluginManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
-import net.digitalingot.feather.serverapi.api.player.PlayerService;
-import net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class BukkitPlayerService implements PlayerService, Listener {
+  private final PluginManager pluginManager;
   private final Map<UUID, BukkitFeatherPlayer> players = new HashMap<>();
 
   public BukkitPlayerService(FeatherBukkitPlugin plugin) {
-    plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    this.pluginManager = plugin.getServer().getPluginManager();
+    this.pluginManager.registerEvents(this, plugin);
   }
 
   public void register(BukkitFeatherPlayer player) {
-    this.players.put(player.getId(), player);
+    this.players.put(player.getUniqueId(), player);
   }
 
   @Override
@@ -38,6 +43,10 @@ public class BukkitPlayerService implements PlayerService, Listener {
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerQuit(PlayerQuitEvent event) {
-    this.players.remove(event.getPlayer().getUniqueId());
+    FeatherPlayer player = this.players.remove(event.getPlayer().getUniqueId());
+
+    if (player != null) {
+      this.pluginManager.callEvent(new FeatherPlayerQuitEvent(player));
+    }
   }
 }

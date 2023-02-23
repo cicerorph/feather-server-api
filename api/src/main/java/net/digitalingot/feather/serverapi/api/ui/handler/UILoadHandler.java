@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 public interface UILoadHandler {
 
   /**
-   *
    * @param player
    */
   void onLoadError(@NotNull FeatherPlayer player, @NotNull String errorText);

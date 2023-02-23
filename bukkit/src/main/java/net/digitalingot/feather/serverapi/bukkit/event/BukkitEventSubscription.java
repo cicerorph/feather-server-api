@@ -1,11 +1,12 @@
 package net.digitalingot.feather.serverapi.bukkit.event;
 
-import java.util.function.Consumer;
 import net.digitalingot.feather.serverapi.api.event.EventSubscription;
 import net.digitalingot.feather.serverapi.api.event.FeatherEvent;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 public class BukkitEventSubscription<T extends FeatherEvent>
     implements EventSubscription<T>, Listener {

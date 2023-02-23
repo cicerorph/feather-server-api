@@ -1,7 +1,8 @@
 package net.digitalingot.feather.serverapi.api.model;
 
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class PlatformMod {
   @NotNull private final String name;

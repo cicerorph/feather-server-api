@@ -8,10 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class C2SFUILoadError implements Message<ServerMessageHandler> {
 
-  @NotNull
-  private final String frame;
-  @NotNull
-  private final String errorText;
+  @NotNull private final String frame;
+  @NotNull private final String errorText;
 
   public C2SFUILoadError(@NotNull String frame, @NotNull String errorText) {
     this.frame = frame;

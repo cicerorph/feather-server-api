@@ -12,7 +12,7 @@ public enum MessageEncoder {
 
   public byte[] encode(Message<?> message) {
     // TODO: error handling
-    int id = messages.getId(message.getClass());
+    int id = this.messages.getId(message.getClass());
     SimpleMessageBuffer buffer = new SimpleMessageBuffer();
     buffer.writeVarInt(id);
     message.write(buffer);

@@ -12,6 +12,8 @@ public interface MessageWriter {
 
   MessageWriter writeByte(byte value);
 
+  MessageWriter writeByteArray(byte[] bytes);
+
   MessageWriter writeBool(boolean value);
 
   <T> MessageWriter writeCollection(Collection<T> items, Encoder<T> encoder);

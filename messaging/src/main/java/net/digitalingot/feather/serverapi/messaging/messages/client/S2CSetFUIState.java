@@ -11,7 +11,8 @@ public class S2CSetFUIState implements Message<ClientMessageHandler> {
   @NotNull private final Action action;
   private final boolean state;
 
-  public S2CSetFUIState(@NotNull String frame, @NotNull S2CSetFUIState.Action action, boolean state) {
+  public S2CSetFUIState(
+      @NotNull String frame, @NotNull S2CSetFUIState.Action action, boolean state) {
     this.frame = frame;
     this.action = action;
     this.state = state;

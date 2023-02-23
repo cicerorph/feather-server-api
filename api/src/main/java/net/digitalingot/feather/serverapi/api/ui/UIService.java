@@ -1,8 +1,6 @@
 package net.digitalingot.feather.serverapi.api.ui;
 
-import java.util.Collection;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
-import net.digitalingot.feather.serverapi.api.ui.handler.UIVisibilityHandler;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcController;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,8 +22,8 @@ public interface UIService {
 
   void closePageForPlayer(@NotNull FeatherPlayer player, @NotNull UIPage page);
 
-  void sendPageMessage(@NotNull FeatherPlayer player, @NotNull UIPage page,
-      @NotNull String jsonString);
+  void sendPageMessage(
+      @NotNull FeatherPlayer player, @NotNull UIPage page, @NotNull String jsonString);
 
   void registerCallbacks(@NotNull UIPage page, @NotNull RpcController controller);
 

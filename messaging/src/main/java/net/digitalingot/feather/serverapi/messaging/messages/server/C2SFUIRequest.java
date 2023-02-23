@@ -9,15 +9,12 @@ import org.jetbrains.annotations.NotNull;
 public class C2SFUIRequest implements Message<ServerMessageHandler> {
 
   private final int id;
-  @NotNull
-  private final String frame;
-  @NotNull
-  private final String path;
-  @NotNull
-  private final String payload;
+  @NotNull private final String frame;
+  @NotNull private final String path;
+  @NotNull private final String payload;
 
-  public C2SFUIRequest(int id, @NotNull String frame, @NotNull String path,
-      @NotNull String payload) {
+  public C2SFUIRequest(
+      int id, @NotNull String frame, @NotNull String path, @NotNull String payload) {
     this.id = id;
     this.frame = frame;
     this.path = path;

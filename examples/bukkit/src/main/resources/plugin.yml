@@ -4,7 +4,7 @@ description: ""
 author: Feather
 website: https://feathermc.com
 main: net.digitalingot.feather.serverapi.examples.bukkit.ExamplePlugin
-depend: [FeatherServerAPI]
+depend: [ FeatherServerAPI ]
 
 commands:
-  snake: {}
+  snake: { }

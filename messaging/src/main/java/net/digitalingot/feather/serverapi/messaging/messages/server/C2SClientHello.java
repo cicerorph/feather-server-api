@@ -1,6 +1,5 @@
 package net.digitalingot.feather.serverapi.messaging.messages.server;
 
-import java.util.Collection;
 import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.MessageReader;
 import net.digitalingot.feather.serverapi.messaging.MessageWriter;
@@ -8,6 +7,8 @@ import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.domain.FeatherMod;
 import net.digitalingot.feather.serverapi.messaging.domain.Platform;
 import net.digitalingot.feather.serverapi.messaging.domain.PlatformMod;
+
+import java.util.Collection;
 
 public class C2SClientHello implements Message<ServerMessageHandler> {
   private final Platform platform;

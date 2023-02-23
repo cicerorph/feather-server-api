@@ -16,6 +16,6 @@ public class MessageDecoder<T extends MessageHandler> {
     SimpleMessageBuffer buffer = SimpleMessageBuffer.of(message);
     int messageId = buffer.readVarInt();
     // TODO: error handling
-    return (Message<T>) messages.createMessage(messageId, buffer);
+    return (Message<T>) this.messages.createMessage(messageId, buffer);
   }
 }

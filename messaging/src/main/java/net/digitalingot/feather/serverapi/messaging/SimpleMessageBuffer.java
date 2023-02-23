@@ -1,14 +1,15 @@
 package net.digitalingot.feather.serverapi.messaging;
 
+import net.digitalingot.feather.serverapi.messaging.exception.MessageException;
+import net.digitalingot.feather.serverapi.messaging.exception.OverflowException;
+import org.jetbrains.annotations.ApiStatus.Internal;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.IntFunction;
-import net.digitalingot.feather.serverapi.messaging.exception.MessageException;
-import net.digitalingot.feather.serverapi.messaging.exception.OverflowException;
-import org.jetbrains.annotations.ApiStatus.Internal;
 
 public class SimpleMessageBuffer implements MessageBuffer {
   private static final int MAX_BUFFER_SIZE = 32766;
@@ -218,6 +219,12 @@ public class SimpleMessageBuffer implements MessageBuffer {
   public MessageWriter writeByte(byte value) {
     ensureRemaining(1);
     this.buffer.put(value);
+    return this;
+  }
+
+  @Override
+  public MessageWriter writeByteArray(byte[] bytes) {
+    writeBytes(bytes);
     return this;
   }
 

@@ -7,10 +7,8 @@ import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class C2SFUIStateChange implements Message<ServerMessageHandler> {
-  @NotNull
-  private final String frame;
-  @NotNull
-  private final StateType type;
+  @NotNull private final String frame;
+  @NotNull private final StateType type;
 
   public C2SFUIStateChange(@NotNull String frame, @NotNull StateType type) {
     this.frame = frame;

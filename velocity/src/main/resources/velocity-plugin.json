@@ -2,7 +2,9 @@
   "id": "feather-server-api",
   "name": "FeatherServerAPI",
   "version": "0.0.1-SNAPSHOT",
-  "authors": ["Feather"],
+  "authors": [
+    "Feather"
+  ],
   "dependencies": [],
   "main": "net.digitalingot.feather.serverapi.velocity.FeatherVelocityPlugin"
 }

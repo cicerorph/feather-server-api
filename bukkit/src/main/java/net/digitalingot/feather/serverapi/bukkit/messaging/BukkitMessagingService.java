@@ -1,23 +1,15 @@
 package net.digitalingot.feather.serverapi.bukkit.messaging;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import net.digitalingot.feather.serverapi.api.model.FeatherMod;
 import net.digitalingot.feather.serverapi.api.model.Platform;
 import net.digitalingot.feather.serverapi.api.model.PlatformMod;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
-import net.digitalingot.feather.serverapi.api.ui.UIService;
 import net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin;
 import net.digitalingot.feather.serverapi.bukkit.event.player.BukkitPlayerHelloEvent;
 import net.digitalingot.feather.serverapi.bukkit.player.BukkitFeatherPlayer;
 import net.digitalingot.feather.serverapi.bukkit.player.BukkitPlayerService;
-import net.digitalingot.feather.serverapi.bukkit.ui.BukkitUIService;
 import net.digitalingot.feather.serverapi.bukkit.ui.rpc.RpcService;
+import net.digitalingot.feather.serverapi.bukkit.update.UpdateNotifier;
 import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.MessageConstants;
 import net.digitalingot.feather.serverapi.messaging.MessageDecoder;
@@ -28,12 +20,19 @@ import net.digitalingot.feather.serverapi.messaging.messages.server.C2SClientHel
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SHandshake;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.messaging.Messenger;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BukkitMessagingService implements Listener {
   private static final String CHANNEL = "feather:client";
@@ -47,11 +46,12 @@ public class BukkitMessagingService implements Listener {
   public BukkitMessagingService(
       @NotNull FeatherBukkitPlugin plugin,
       @NotNull BukkitPlayerService playerService,
-      @NotNull RpcService rpcService) {
+      @NotNull RpcService rpcService,
+      @NotNull UpdateNotifier updateNotifier) {
     this.plugin = plugin;
     this.playerService = playerService;
     this.rpcService = rpcService;
-    this.handshaking = new Handshaking(this, plugin.getLogger());
+    this.handshaking = new Handshaking(this, updateNotifier);
 
     Bukkit.getPluginManager().registerEvents(this.handshaking, plugin);
 
@@ -83,9 +83,12 @@ public class BukkitMessagingService implements Listener {
     }
   }
 
+  public void callEvent(Event event) {
+    this.plugin.getServer().getPluginManager().callEvent(event);
+  }
+
   private void handleHello(Player player, C2SClientHello hello) {
-    BukkitFeatherPlayer featherPlayer =
-        new BukkitFeatherPlayer(player, this, this.rpcService);
+    BukkitFeatherPlayer featherPlayer = new BukkitFeatherPlayer(player, this, this.rpcService);
     this.playerService.register(featherPlayer);
 
     Platform platform;
@@ -111,7 +114,7 @@ public class BukkitMessagingService implements Listener {
                 .map(domain -> new FeatherMod(domain.getName()))
                 .collect(Collectors.toList()));
 
-    this.plugin.getServer().getPluginManager().callEvent(helloEvent);
+    this.callEvent(helloEvent);
   }
 
   private void handleMessage(BukkitFeatherPlayer player, Message<ServerMessageHandler> message) {
@@ -141,12 +144,12 @@ public class BukkitMessagingService implements Listener {
 
   private static class Handshaking implements Listener {
     private final BukkitMessagingService messagingService;
-    private final IncompatibleProtocolNotifier incompatibleProtocolNotifier;
     private final Map<UUID, HandshakeState> handshakes = new HashMap<>();
+    private final UpdateNotifier updateNotifier;
 
-    public Handshaking(BukkitMessagingService messagingService, Logger logger) {
+    public Handshaking(BukkitMessagingService messagingService, UpdateNotifier updateNotifier) {
       this.messagingService = messagingService;
-      this.incompatibleProtocolNotifier = new IncompatibleProtocolNotifier(logger);
+      this.updateNotifier = updateNotifier;
     }
 
     private HandshakeState getState(Player player) {
@@ -208,14 +211,10 @@ public class BukkitMessagingService implements Listener {
       }
       C2SHandshake handshake = ((C2SHandshake) message);
       int protocolVersion = handshake.getProtocolVersion();
-      if (protocolVersion == MessageConstants.VERSION) {
-        return true;
-      } else {
-        if (protocolVersion > MessageConstants.VERSION) {
-          this.incompatibleProtocolNotifier.notify(protocolVersion);
-        }
-        return false;
+      if (protocolVersion > MessageConstants.VERSION) {
+        this.updateNotifier.setPotentiallyOutOfDate(protocolVersion);
       }
+      return true;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -227,28 +226,6 @@ public class BukkitMessagingService implements Listener {
       EXPECTING_HANDSHAKE,
       EXPECTING_HELLO,
       REJECTED
-    }
-
-    private static class IncompatibleProtocolNotifier {
-      private final Logger logger;
-      private boolean notified = false;
-
-      public IncompatibleProtocolNotifier(Logger logger) {
-        this.logger = logger;
-      }
-
-      private static String formatIncompatibleProtocolMessage(int clientVersion) {
-        return String.format(
-            "Feather Server API might be out of date. Incompatible protocol version (%d > %d).",
-            clientVersion, MessageConstants.VERSION);
-      }
-
-      public void notify(int clientVersion) {
-        if (!this.notified) {
-          this.logger.info(formatIncompatibleProtocolMessage(clientVersion));
-          this.notified = true;
-        }
-      }
     }
   }
 }

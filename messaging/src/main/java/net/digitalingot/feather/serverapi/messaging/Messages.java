@@ -1,23 +1,27 @@
 package net.digitalingot.feather.serverapi.messaging;
 
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CCreateFUI;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CDestroyFUI;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIMessage;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIResponse;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CGetEnabledMods;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CHandshake;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CModsAction;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetFUIState;
+import net.digitalingot.feather.serverapi.messaging.messages.server.C2SClientHello;
+import net.digitalingot.feather.serverapi.messaging.messages.server.C2SEnabledMods;
+import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUILoadError;
+import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIRequest;
+import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIStateChange;
+import net.digitalingot.feather.serverapi.messaging.messages.server.C2SHandshake;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CCreateFUI;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CDestroyFUI;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIMessage;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIResponse;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CHandshake;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetFUIState;
-import net.digitalingot.feather.serverapi.messaging.messages.server.C2SClientHello;
-import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUILoadError;
-import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIRequest;
-import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIStateChange;
-import net.digitalingot.feather.serverapi.messaging.messages.server.C2SHandshake;
-import org.jetbrains.annotations.Nullable;
 
 public enum Messages {
   SERVER_BOUND(
@@ -26,7 +30,8 @@ public enum Messages {
           .register(C2SClientHello.class, C2SClientHello::new)
           .register(C2SFUIStateChange.class, C2SFUIStateChange::new)
           .register(C2SFUILoadError.class, C2SFUILoadError::new)
-          .register(C2SFUIRequest .class, C2SFUIRequest::new)),
+          .register(C2SFUIRequest.class, C2SFUIRequest::new)
+          .register(C2SEnabledMods.class, C2SEnabledMods::new)),
   CLIENT_BOUND(
       registry(ClientMessageHandler.class)
           .register(S2CHandshake.class, S2CHandshake::new)
@@ -34,7 +39,9 @@ public enum Messages {
           .register(S2CDestroyFUI.class, S2CDestroyFUI::new)
           .register(S2CSetFUIState.class, S2CSetFUIState::new)
           .register(S2CFUIMessage.class, S2CFUIMessage::new)
-          .register(S2CFUIResponse.class, S2CFUIResponse::new));
+          .register(S2CFUIResponse.class, S2CFUIResponse::new)
+          .register(S2CGetEnabledMods.class, S2CGetEnabledMods::new)
+          .register(S2CModsAction.class, S2CModsAction::new));
 
   private final MessageRegistry<?> registry;
 
@@ -68,7 +75,7 @@ public enum Messages {
       if (currentId != null) {
         throw new AssertionError("Message " + message + " already registered with id " + currentId);
       }
-      idToMessageMapping.add(deserializer);
+      this.idToMessageMapping.add(deserializer);
       return this;
     }
 

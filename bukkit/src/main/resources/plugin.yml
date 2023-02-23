@@ -5,3 +5,12 @@ author: Feather
 website: https://feathermc.com
 main: net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin
 load: STARTUP
+
+permissions:
+  feather-server-api.notify:
+    description: Grants permission to see notifications
+    default: op
+  feather-server-api.*:
+    default: op
+    children:
+      - feather-server-api.notify

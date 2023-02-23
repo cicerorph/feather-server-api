@@ -1,10 +1,11 @@
 package net.digitalingot.feather.serverapi.messaging.domain;
 
-import java.util.Objects;
 import net.digitalingot.feather.serverapi.messaging.MessageReader;
 import net.digitalingot.feather.serverapi.messaging.MessageWriter;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class PlatformMod {
   @Internal public static final MessageReader.Decoder<PlatformMod> DECODER = new Decoder();

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -123,6 +124,7 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
             event -> {
               getLogger().info("Got hello from " + event.getPlayer().getName());
               getLogger().info("Platform: " + event.getPlatform());
+
               getLogger()
                   .info(
                       "Platform Mods ("
@@ -139,6 +141,11 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
                           + event.getFeatherMods().stream()
                               .map(FeatherMod::getName)
                               .collect(Collectors.joining(", ")));
+
+              // Disable perspective mod on player join
+              event
+                  .getPlayer()
+                  .disableMods(Collections.singletonList(new FeatherMod("perspective")));
 
               FeatherAPI.getUIService().createPageForPlayer(event.getPlayer(), this.page);
             });

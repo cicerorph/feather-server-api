@@ -3,18 +3,12 @@ package net.digitalingot.feather.serverapi.api.ui.handler;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Convenience class to create {@link UIFocusHandler} objects.
- */
+/** Convenience class to create {@link UIFocusHandler} objects. */
 public class UIFocusHandlerAdapter implements UIFocusHandler {
 
   @Override
-  public void onFocusGained(@NotNull FeatherPlayer player) {
-
-  }
+  public void onFocusGained(@NotNull FeatherPlayer player) {}
 
   @Override
-  public void onFocusLost(@NotNull FeatherPlayer player) {
-
-  }
+  public void onFocusLost(@NotNull FeatherPlayer player) {}
 }

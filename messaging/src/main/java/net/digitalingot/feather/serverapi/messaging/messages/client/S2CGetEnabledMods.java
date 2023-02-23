@@ -4,22 +4,21 @@ import net.digitalingot.feather.serverapi.messaging.ClientMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.MessageReader;
 import net.digitalingot.feather.serverapi.messaging.MessageWriter;
-import org.jetbrains.annotations.NotNull;
 
-public class S2CDestroyFUI implements Message<ClientMessageHandler> {
-  @NotNull private final String frame;
+public class S2CGetEnabledMods implements Message<ClientMessageHandler> {
+  private final int id;
 
-  public S2CDestroyFUI(@NotNull String frame) {
-    this.frame = frame;
+  public S2CGetEnabledMods(int id) {
+    this.id = id;
   }
 
-  public S2CDestroyFUI(MessageReader reader) {
-    this.frame = reader.readUtf();
+  public S2CGetEnabledMods(MessageReader reader) {
+    this.id = reader.readVarInt();
   }
 
   @Override
   public void write(MessageWriter writer) {
-    writer.writeUtf(this.frame);
+    writer.writeVarInt(this.id);
   }
 
   @Override
@@ -27,8 +26,7 @@ public class S2CDestroyFUI implements Message<ClientMessageHandler> {
     handler.handle(this);
   }
 
-  @NotNull
-  public String getFrame() {
-    return this.frame;
+  public int getId() {
+    return this.id;
   }
 }

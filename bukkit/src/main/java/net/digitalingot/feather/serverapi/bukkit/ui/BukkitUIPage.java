@@ -12,20 +12,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class BukkitUIPage implements UIPage, UILifecycleHandler, UILoadHandler, UIFocusHandler, UIVisibilityHandler {
-  @NotNull
-  private final Plugin owner;
-  @NotNull
-  private final String url;
+public class BukkitUIPage
+    implements UIPage, UILifecycleHandler, UILoadHandler, UIFocusHandler, UIVisibilityHandler {
+  @NotNull private final Plugin owner;
+  @NotNull private final String url;
 
-  @Nullable
-  private UILifecycleHandler lifecycleHandler;
-  @Nullable
-  private UILoadHandler loadHandler;
-  @Nullable
-  private UIFocusHandler focusHandler;
-  @Nullable
-  private UIVisibilityHandler visibilityHandler;
+  @Nullable private UILifecycleHandler lifecycleHandler;
+  @Nullable private UILoadHandler loadHandler;
+  @Nullable private UIFocusHandler focusHandler;
+  @Nullable private UIVisibilityHandler visibilityHandler;
 
   public BukkitUIPage(@NotNull Plugin owner, @NotNull String url) {
     this.owner = owner;
@@ -70,7 +65,6 @@ public class BukkitUIPage implements UIPage, UILifecycleHandler, UILoadHandler, 
     Objects.requireNonNull(focusHandler);
     this.focusHandler = focusHandler;
   }
-
 
   @Override
   public void onCreated(@NotNull FeatherPlayer player) {

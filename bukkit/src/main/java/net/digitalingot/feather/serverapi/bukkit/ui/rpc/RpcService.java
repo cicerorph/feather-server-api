@@ -1,14 +1,5 @@
 package net.digitalingot.feather.serverapi.bukkit.ui.rpc;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.logging.Logger;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcController;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcHandler;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcRequest;
@@ -23,6 +14,15 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.logging.Logger;
 
 public class RpcService {
 
@@ -113,8 +113,7 @@ public class RpcService {
       Method rpcMethod = entry.getValue();
 
       try {
-        RegisteredRpcHandler handler =
-            new RegisteredRpcHandler(controller, rpcMethod);
+        RegisteredRpcHandler handler = new RegisteredRpcHandler(controller, rpcMethod);
         handlers.put(rpcName, handler);
       } catch (Throwable throwable) {
         throw new IllegalStateException(throwable);
@@ -140,14 +139,14 @@ public class RpcService {
     this.rpcHosts.remove(getRpcHostName(plugin));
   }
 
-  public void handle(BukkitFeatherPlayer player, String rpcHostName, String rpcName, int requestId,
-      String body) {
+  public void handle(
+      BukkitFeatherPlayer player, String rpcHostName, String rpcName, int requestId, String body) {
     RegisteredRpcHandler handler = this.getRpcHandler(rpcHostName, rpcName);
 
     if (handler != null) {
       try {
-        handler.invoke(new BukkitRpcRequest(player, body),
-            new BukkitRpcResponse(requestId, player));
+        handler.invoke(
+            new BukkitRpcRequest(player, body), new BukkitRpcResponse(requestId, player));
       } catch (Throwable throwable) {
         this.logger.warning("Error occurred handling RPC request");
         throwable.printStackTrace();
@@ -163,8 +162,8 @@ public class RpcService {
     return rpcHost != null ? rpcHost.getHandlerByName(rpcName) : null;
   }
 
-  private static boolean isControllerRegistered(@Nullable RpcHost rpcHost,
-      @NotNull RpcController controller) {
+  private static boolean isControllerRegistered(
+      @Nullable RpcHost rpcHost, @NotNull RpcController controller) {
     return rpcHost != null && rpcHost.isControllerRegistered(controller);
   }
 

@@ -21,10 +21,8 @@ import java.util.Map;
 
 public class BukkitUIService implements UIService {
 
-  @NotNull
-  private final BukkitMessagingService messagingService;
-  @NotNull
-  private final RpcService rpcService;
+  @NotNull private final BukkitMessagingService messagingService;
+  @NotNull private final RpcService rpcService;
 
   private final Map<String, BukkitUIPage> registeredPages = Maps.newHashMap();
 
@@ -63,18 +61,19 @@ public class BukkitUIService implements UIService {
   @Override
   public void createPageForPlayer(@NotNull FeatherPlayer player, @NotNull UIPage page) {
     BukkitUIPage bukkitPage = (BukkitUIPage) page;
-    this.messagingService.sendMessage((BukkitFeatherPlayer) player,
+    this.messagingService.sendMessage(
+        (BukkitFeatherPlayer) player,
         new S2CCreateFUI(bukkitPage.getRpcHostname(), bukkitPage.getPage()));
   }
 
   @Override
   public void destroyPageForPlayer(@NotNull FeatherPlayer player, @NotNull UIPage page) {
-    this.messagingService.sendMessage((BukkitFeatherPlayer) player,
-        new S2CDestroyFUI(((BukkitUIPage) page).getRpcHostname()));
+    this.messagingService.sendMessage(
+        (BukkitFeatherPlayer) player, new S2CDestroyFUI(((BukkitUIPage) page).getRpcHostname()));
   }
 
-  private void setState(@NotNull FeatherPlayer player, @NotNull UIPage page, @NotNull Action action,
-      boolean state) {
+  private void setState(
+      @NotNull FeatherPlayer player, @NotNull UIPage page, @NotNull Action action, boolean state) {
     this.messagingService.sendMessage(
         (BukkitFeatherPlayer) player,
         new S2CSetFUIState(((BukkitUIPage) page).getRpcHostname(), action, state));
@@ -101,9 +100,10 @@ public class BukkitUIService implements UIService {
   }
 
   @Override
-  public void sendPageMessage(@NotNull FeatherPlayer player, @NotNull UIPage page,
-      @NotNull String jsonString) {
-    this.messagingService.sendMessage((BukkitFeatherPlayer) player,
+  public void sendPageMessage(
+      @NotNull FeatherPlayer player, @NotNull UIPage page, @NotNull String jsonString) {
+    this.messagingService.sendMessage(
+        (BukkitFeatherPlayer) player,
         new S2CFUIMessage(((BukkitUIPage) page).getRpcHostname(), jsonString));
   }
 
@@ -113,8 +113,8 @@ public class BukkitUIService implements UIService {
   }
 
   @Override
-  public void unregisterCallbacksForController(@NotNull UIPage page,
-      @NotNull RpcController controller) {
+  public void unregisterCallbacksForController(
+      @NotNull UIPage page, @NotNull RpcController controller) {
     this.rpcService.unregisterByController(((BukkitUIPage) page).getOwner(), controller);
   }
 

@@ -26,6 +26,6 @@ public class S2CHandshake implements Message<ClientMessageHandler> {
   public void handle(ClientMessageHandler handler) {}
 
   public int getProtocolVersion() {
-    return protocolVersion;
+    return this.protocolVersion;
   }
 }

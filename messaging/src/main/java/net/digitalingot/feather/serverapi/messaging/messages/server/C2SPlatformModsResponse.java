@@ -1,12 +1,13 @@
 package net.digitalingot.feather.serverapi.messaging.messages.server;
 
-import java.util.Collection;
 import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.MessageReader;
 import net.digitalingot.feather.serverapi.messaging.MessageWriter;
 import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.domain.PlatformMod;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 public class C2SPlatformModsResponse implements Message<ServerMessageHandler> {
   @NotNull private final Collection<PlatformMod> platformMods;

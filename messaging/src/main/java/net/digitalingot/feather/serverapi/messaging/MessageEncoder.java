@@ -1,5 +1,7 @@
 package net.digitalingot.feather.serverapi.messaging;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum MessageEncoder {
   SERVER_BOUND(Messages.SERVER_BOUND),
   CLIENT_BOUND(Messages.CLIENT_BOUND);
@@ -10,7 +12,7 @@ public enum MessageEncoder {
     this.messages = messages;
   }
 
-  public byte[] encode(Message<?> message) {
+  public byte[] encode(@NotNull Message<?> message) {
     // TODO: error handling
     int id = this.messages.getId(message.getClass());
     SimpleMessageBuffer buffer = new SimpleMessageBuffer();

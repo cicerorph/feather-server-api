@@ -18,6 +18,8 @@ import net.digitalingot.feather.serverapi.api.ui.rpc.RpcController;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcHandler;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcRequest;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcResponse;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -148,7 +150,23 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
                   .disableMods(Collections.singletonList(new FeatherMod("perspective")));
 
               FeatherAPI.getUIService().createPageForPlayer(event.getPlayer(), this.page);
+
+              createSpawnLocationWaypoint(event.getPlayer());
             });
+  }
+
+  private void createSpawnLocationWaypoint(FeatherPlayer featherPlayer) {
+    Player player = Bukkit.getPlayer(featherPlayer.getUniqueId());
+    Location spawnLocation = player.getWorld().getSpawnLocation();
+
+    FeatherAPI.getWaypointService()
+        .createWaypoint(
+            featherPlayer,
+            spawnLocation.getBlockX(),
+            spawnLocation.getBlockY(),
+            spawnLocation.getBlockZ(),
+            0x00FF00FF,
+            "Spawn Location");
   }
 
   @SuppressWarnings("deprecation")

@@ -3,12 +3,15 @@ package net.digitalingot.feather.serverapi.messaging;
 import net.digitalingot.feather.serverapi.messaging.exception.MessageException;
 import net.digitalingot.feather.serverapi.messaging.exception.OverflowException;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.IntFunction;
 
 public class SimpleMessageBuffer implements MessageBuffer {
@@ -74,6 +77,19 @@ public class SimpleMessageBuffer implements MessageBuffer {
     return result;
   }
 
+  @Override
+  public int readInt() {
+    return this.buffer.getInt();
+  }
+
+  @Override
+  public MessageWriter writeInt(int value) {
+    ensureRemaining(4);
+    this.buffer.putInt(value);
+    return this;
+  }
+
+  @Override
   public int readVarInt() {
     int result = 0;
     int shift = 0;
@@ -170,6 +186,45 @@ public class SimpleMessageBuffer implements MessageBuffer {
   }
 
   @Override
+  public long readLong() {
+    return this.buffer.getLong();
+  }
+
+  @Override
+  public MessageWriter writeLong(long value) {
+    ensureRemaining(8);
+    this.buffer.putLong(value);
+    return this;
+  }
+
+  @Override
+  public UUID readUUID() {
+    return new UUID(this.readLong(), this.readLong());
+  }
+
+  public MessageWriter writeUUID(UUID value) {
+    this.writeLong(value.getMostSignificantBits());
+    this.writeLong(value.getLeastSignificantBits());
+    return this;
+  }
+
+  @Override
+  public <T> Optional<T> readOptional(Decoder<T> decoder) {
+    return readBool() ? Optional.of(decoder.apply(this)) : Optional.empty();
+  }
+
+  @Override
+  public <T> MessageWriter writeOptional(@Nullable T value, Encoder<T> encoder) {
+    if (value != null) {
+      writeBool(true);
+      encoder.accept(this, value);
+    } else {
+      writeBool(false);
+    }
+    return this;
+  }
+
+  @Override
   public <E extends Enum<E>> MessageWriter writeEnum(Enum<E> value) {
     writeVarInt(value.ordinal());
     return this;
@@ -192,6 +247,17 @@ public class SimpleMessageBuffer implements MessageBuffer {
   }
 
   @Override
+  public short readUnsignedByte() {
+    return (short) (readByte() & 0xFF);
+  }
+
+  @Override
+  public MessageWriter writeUnsignedByte(short value) {
+    writeByte((byte) value);
+    return this;
+  }
+
+  @Override
   public byte[] readByteArray() {
     return readByteArray(this.buffer.limit());
   }
@@ -203,6 +269,12 @@ public class SimpleMessageBuffer implements MessageBuffer {
       throw new OverflowException("Byte Array", count, limit);
     }
     return readBytes(count);
+  }
+
+  @Override
+  public MessageReader readBytes(byte[] dst, int offset, int length) {
+    this.buffer.get(dst, offset, length);
+    return this;
   }
 
   public byte[] readBytes(int size) {
@@ -224,6 +296,8 @@ public class SimpleMessageBuffer implements MessageBuffer {
 
   @Override
   public MessageWriter writeByteArray(byte[] bytes) {
+    ensureRemaining(varIntSize(bytes.length) + bytes.length);
+    writeVarInt(bytes.length);
     writeBytes(bytes);
     return this;
   }
@@ -239,6 +313,11 @@ public class SimpleMessageBuffer implements MessageBuffer {
     ensureRemaining(bytes.length);
     this.buffer.put(bytes);
     return this;
+  }
+
+  @Internal
+  int remaining() {
+    return this.buffer.remaining();
   }
 
   @Internal

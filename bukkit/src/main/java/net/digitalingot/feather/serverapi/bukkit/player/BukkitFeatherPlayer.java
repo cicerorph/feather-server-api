@@ -8,6 +8,8 @@ import net.digitalingot.feather.serverapi.bukkit.ui.rpc.RpcService;
 import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CModsAction;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CServerBackground;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -106,6 +108,6 @@ public class BukkitFeatherPlayer implements FeatherPlayer {
   }
 
   public void callEvent(Event event) {
-    messagingService.callEvent(event);
+    this.messagingService.callEvent(event);
   }
 }

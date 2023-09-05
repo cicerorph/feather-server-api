@@ -14,6 +14,7 @@ import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.MessageConstants;
 import net.digitalingot.feather.serverapi.messaging.MessageDecoder;
 import net.digitalingot.feather.serverapi.messaging.MessageEncoder;
+import net.digitalingot.feather.serverapi.messaging.MessageFragmenter;
 import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CHandshake;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SClientHello;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 
 public class BukkitMessagingService implements Listener {
   private static final String CHANNEL = "feather:client";
+  private static final String CHANNEL_FRAGMENTED = "feather:client/frag";
 
   @NotNull private final FeatherBukkitPlugin plugin;
 
@@ -57,6 +59,7 @@ public class BukkitMessagingService implements Listener {
 
     Messenger messenger = Bukkit.getMessenger();
     messenger.registerOutgoingPluginChannel(plugin, CHANNEL);
+    messenger.registerOutgoingPluginChannel(plugin, CHANNEL_FRAGMENTED);
     messenger.registerIncomingPluginChannel(plugin, CHANNEL, this::onPluginMessage);
   }
 
@@ -139,6 +142,14 @@ public class BukkitMessagingService implements Listener {
 
   public void sendMessage(Player player, Message<?> message) {
     byte[] encoded = MessageEncoder.CLIENT_BOUND.encode(message);
+
+    if (encoded.length > Messenger.MAX_MESSAGE_SIZE) {
+      for (byte[] data : MessageFragmenter.CLIENT_BOUND.fragment(message)) {
+        player.sendPluginMessage(this.plugin, CHANNEL_FRAGMENTED, data);
+      }
+      return;
+    }
+
     player.sendPluginMessage(this.plugin, CHANNEL, encoded);
   }
 

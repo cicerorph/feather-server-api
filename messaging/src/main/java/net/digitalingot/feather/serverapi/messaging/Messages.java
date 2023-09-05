@@ -7,13 +7,18 @@ import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIRespon
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CGetEnabledMods;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CHandshake;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CModsAction;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CServerBackground;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetFUIState;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWaypointCreate;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWaypointDestroy;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWorldChange;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SClientHello;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SEnabledMods;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUILoadError;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIRequest;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIStateChange;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SHandshake;
+import net.digitalingot.feather.serverapi.messaging.messages.server.C2SRequestServerBackground;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,7 +36,8 @@ public enum Messages {
           .register(C2SFUIStateChange.class, C2SFUIStateChange::new)
           .register(C2SFUILoadError.class, C2SFUILoadError::new)
           .register(C2SFUIRequest.class, C2SFUIRequest::new)
-          .register(C2SEnabledMods.class, C2SEnabledMods::new)),
+          .register(C2SEnabledMods.class, C2SEnabledMods::new)
+          .register(C2SRequestServerBackground.class, C2SRequestServerBackground::new)),
   CLIENT_BOUND(
       registry(ClientMessageHandler.class)
           .register(S2CHandshake.class, S2CHandshake::new)
@@ -41,7 +47,11 @@ public enum Messages {
           .register(S2CFUIMessage.class, S2CFUIMessage::new)
           .register(S2CFUIResponse.class, S2CFUIResponse::new)
           .register(S2CGetEnabledMods.class, S2CGetEnabledMods::new)
-          .register(S2CModsAction.class, S2CModsAction::new));
+          .register(S2CModsAction.class, S2CModsAction::new)
+          .register(S2CWaypointCreate.class, S2CWaypointCreate::new)
+          .register(S2CWaypointDestroy.class, S2CWaypointDestroy::new)
+          .register(S2CWorldChange.class, S2CWorldChange::new)
+          .register(S2CServerBackground.class, S2CServerBackground::new));
 
   private final MessageRegistry<?> registry;
 

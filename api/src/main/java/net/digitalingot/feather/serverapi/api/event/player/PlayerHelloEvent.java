@@ -12,6 +12,7 @@ public interface PlayerHelloEvent extends FeatherEvent {
   @NotNull
   Platform getPlatform();
 
+  @Deprecated
   @NotNull
   Collection<PlatformMod> getPlatformMods();
 

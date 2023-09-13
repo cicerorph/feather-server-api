@@ -1,6 +1,5 @@
 name: FeatherServerAPI
-version: 0.0.1-SNAPSHOT
-description: ""
+version: '${version}'
 author: Feather
 website: https://feathermc.com
 main: net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin

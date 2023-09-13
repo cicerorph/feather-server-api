@@ -3,19 +3,136 @@ package net.digitalingot.feather.serverapi.api.waypoint;
 import java.util.Collection;
 import java.util.UUID;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface WaypointService {
-  UUID createWaypoint(FeatherPlayer player, int posX, int posY, int posZ, int color);
+  @Deprecated int NO_DURATION = -1;
 
-  UUID createWaypoint(FeatherPlayer player, int posX, int posY, int posZ, int color, String name);
+  @Deprecated
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player, int posX, int posY, int posZ, int color) {
+    return createWaypoint(player, posX, posY, posZ, color, null);
+  }
+
+  @Deprecated
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player,
+      int posX,
+      int posY,
+      int posZ,
+      int color,
+      @Nullable String name) {
+    return createWaypoint(player, posX, posY, posZ, color, name, NO_DURATION);
+  }
+
+  @Deprecated
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player,
+      int posX,
+      int posY,
+      int posZ,
+      int color,
+      @Nullable String name,
+      int duration) {
+    return createWaypoint(
+        player,
+        posX,
+        posY,
+        posZ,
+        WaypointColor.fromRgba(color),
+        name,
+        WaypointDuration.of(duration));
+  }
+
+  @Deprecated
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player,
+      @NotNull UUID worldId,
+      int posX,
+      int posY,
+      int posZ,
+      int color) {
+    return createWaypoint(player, worldId, posX, posY, posZ, color, null);
+  }
+
+  @Deprecated
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player,
+      @NotNull UUID worldId,
+      int posX,
+      int posY,
+      int posZ,
+      int color,
+      @Nullable String name) {
+    return createWaypoint(player, worldId, posX, posY, posZ, color, name, NO_DURATION);
+  }
+
+  @Deprecated
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player,
+      @NotNull UUID worldId,
+      int posX,
+      int posY,
+      int posZ,
+      int color,
+      @Nullable String name,
+      int duration) {
+    return createWaypoint(
+        player,
+        worldId,
+        posX,
+        posY,
+        posZ,
+        WaypointColor.fromRgba(color),
+        name,
+        WaypointDuration.of(duration));
+  }
+
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player, int posX, int posY, int posZ, @NotNull WaypointColor color) {
+    return createWaypoint(player, posX, posY, posZ, color, null);
+  }
+
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player,
+      int posX,
+      int posY,
+      int posZ,
+      @NotNull WaypointColor color,
+      @Nullable String name) {
+    return createWaypoint(player, posX, posY, posZ, color, name, WaypointDuration.none());
+  }
 
   UUID createWaypoint(
-      FeatherPlayer player, int posX, int posY, int posZ, int color, String name, int duration);
+      @NotNull FeatherPlayer player,
+      int posX,
+      int posY,
+      int posZ,
+      @NotNull WaypointColor color,
+      @Nullable String name,
+      @NotNull WaypointDuration duration);
 
-  UUID createWaypoint(FeatherPlayer player, UUID worldId, int posX, int posY, int posZ, int color);
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player,
+      @NotNull UUID worldId,
+      int posX,
+      int posY,
+      int posZ,
+      @NotNull WaypointColor color) {
+    return createWaypoint(player, worldId, posX, posY, posZ, color, null);
+  }
 
-  UUID createWaypoint(
-      FeatherPlayer player, UUID worldId, int posX, int posY, int posZ, int color, String name);
+  default UUID createWaypoint(
+      @NotNull FeatherPlayer player,
+      @NotNull UUID worldId,
+      int posX,
+      int posY,
+      int posZ,
+      @NotNull WaypointColor color,
+      @Nullable String name) {
+    return createWaypoint(player, worldId, posX, posY, posZ, color, name, WaypointDuration.none());
+  }
 
   UUID createWaypoint(
       FeatherPlayer player,
@@ -23,13 +140,14 @@ public interface WaypointService {
       int posX,
       int posY,
       int posZ,
-      int color,
-      String name,
-      int duration);
+      @NotNull WaypointColor color,
+      @Nullable String name,
+      @NotNull WaypointDuration duration);
 
-  void destroyWaypoint(FeatherPlayer player, UUID waypointId);
+  void destroyWaypoint(@NotNull FeatherPlayer player, @NotNull UUID waypointId);
 
-  void destroyWaypoints(FeatherPlayer player, Collection<UUID> waypoints);
+  void destroyWaypoints(
+      @NotNull FeatherPlayer player, @NotNull Collection<@NotNull UUID> waypoints);
 
-  void destroyAllWaypoints(FeatherPlayer player);
+  void destroyAllWaypoints(@NotNull FeatherPlayer player);
 }

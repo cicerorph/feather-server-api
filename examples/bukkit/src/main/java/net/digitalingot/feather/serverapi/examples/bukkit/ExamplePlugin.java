@@ -18,6 +18,7 @@ import net.digitalingot.feather.serverapi.api.ui.rpc.RpcController;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcHandler;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcRequest;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcResponse;
+import net.digitalingot.feather.serverapi.api.waypoint.WaypointColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -165,7 +166,7 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
             spawnLocation.getBlockX(),
             spawnLocation.getBlockY(),
             spawnLocation.getBlockZ(),
-            0x00FF00FF,
+            WaypointColor.chroma(),
             "Spawn Location");
   }
 

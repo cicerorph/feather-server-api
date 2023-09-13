@@ -15,6 +15,7 @@ public class S2CWaypointCreate implements Message<ClientMessageHandler> {
   private final int posX;
   private final int posY;
   private final int posZ;
+  private final boolean chroma;
   private final int color;
   @Nullable private final String name;
   @Nullable private final Integer duration;
@@ -28,6 +29,27 @@ public class S2CWaypointCreate implements Message<ClientMessageHandler> {
     this(id, worldId, posX, posY, posZ, color, name, null);
   }
 
+  public S2CWaypointCreate(UUID id, UUID worldId, int posX, int posY, int posZ, boolean chroma) {
+    this(id, worldId, posX, posY, posZ, chroma, null);
+  }
+
+  public S2CWaypointCreate(
+      UUID id, UUID worldId, int posX, int posY, int posZ, boolean chroma, String name) {
+    this(id, worldId, posX, posY, posZ, chroma, name, null);
+  }
+
+  public S2CWaypointCreate(
+      UUID id,
+      UUID worldId,
+      int posX,
+      int posY,
+      int posZ,
+      boolean chroma,
+      @Nullable String name,
+      @Nullable Integer duration) {
+    this(id, worldId, posX, posY, posZ, chroma, 0, name, duration);
+  }
+
   public S2CWaypointCreate(
       UUID id,
       UUID worldId,
@@ -37,11 +59,25 @@ public class S2CWaypointCreate implements Message<ClientMessageHandler> {
       int color,
       @Nullable String name,
       @Nullable Integer duration) {
+    this(id, worldId, posX, posY, posZ, false, color, name, duration);
+  }
+
+  public S2CWaypointCreate(
+      UUID id,
+      UUID worldId,
+      int posX,
+      int posY,
+      int posZ,
+      boolean chroma,
+      int color,
+      @Nullable String name,
+      @Nullable Integer duration) {
     this.id = id;
     this.worldId = worldId;
     this.posX = posX;
     this.posY = posY;
     this.posZ = posZ;
+    this.chroma = chroma;
     this.color = color;
     this.name = name;
     this.duration = duration != null && duration > 0 ? duration : null;
@@ -53,7 +89,11 @@ public class S2CWaypointCreate implements Message<ClientMessageHandler> {
     this.posX = reader.readVarInt();
     this.posY = reader.readVarInt();
     this.posZ = reader.readVarInt();
-    this.color = reader.readInt();
+    if (!(this.chroma = reader.readBool())) {
+      this.color = reader.readInt();
+    } else {
+      this.color = 0;
+    }
     this.name = reader.readOptional(MessageReader::readUtf).orElse(null);
     this.duration = reader.readOptional(MessageReader::readVarInt).orElse(null);
   }
@@ -65,7 +105,10 @@ public class S2CWaypointCreate implements Message<ClientMessageHandler> {
     writer.writeVarInt(this.posX);
     writer.writeVarInt(this.posY);
     writer.writeVarInt(this.posZ);
-    writer.writeInt(this.color);
+    writer.writeBool(this.chroma);
+    if (!this.chroma) {
+      writer.writeInt(this.color);
+    }
     writer.writeOptional(this.name, MessageWriter::writeUtf);
     writer.writeOptional(this.duration, MessageWriter::writeVarInt);
   }
@@ -93,6 +136,10 @@ public class S2CWaypointCreate implements Message<ClientMessageHandler> {
 
   public int getPosZ() {
     return this.posZ;
+  }
+
+  public boolean isChroma() {
+    return this.chroma;
   }
 
   public int getColor() {

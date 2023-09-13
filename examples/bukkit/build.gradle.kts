@@ -24,6 +24,9 @@ dependencies {
 
 tasks.withType<ProcessResources> {
     from(externalResources.files)
+    files("plugin.yml") {
+        expand("version" to project.version)
+    }
 }
 
 tasks.withType<Jar> {

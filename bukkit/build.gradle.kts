@@ -23,3 +23,9 @@ tasks.withType<Jar> {
     archiveBaseName.set("feather-server-api")
     archiveClassifier.set("bukkit")
 }
+
+tasks.processResources {
+    files("plugin.yml") {
+        expand("version" to project.version)
+    }
+}

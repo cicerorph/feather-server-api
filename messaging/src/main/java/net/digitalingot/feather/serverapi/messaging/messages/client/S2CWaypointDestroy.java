@@ -26,7 +26,7 @@ public class S2CWaypointDestroy implements Message<ClientMessageHandler> {
 
   @Override
   public void write(MessageWriter writer) {
-    writer.writeCollection(ids, MessageWriter::writeUUID);
+    writer.writeCollection(this.ids, MessageWriter::writeUUID);
   }
 
   @Override

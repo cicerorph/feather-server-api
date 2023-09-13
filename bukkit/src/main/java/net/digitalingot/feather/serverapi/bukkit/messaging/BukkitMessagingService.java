@@ -1,8 +1,8 @@
 package net.digitalingot.feather.serverapi.bukkit.messaging;
 
+import java.util.Collections;
 import net.digitalingot.feather.serverapi.api.model.FeatherMod;
 import net.digitalingot.feather.serverapi.api.model.Platform;
-import net.digitalingot.feather.serverapi.api.model.PlatformMod;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin;
 import net.digitalingot.feather.serverapi.bukkit.event.player.BukkitPlayerHelloEvent;
@@ -110,9 +110,7 @@ public class BukkitMessagingService implements Listener {
         new BukkitPlayerHelloEvent(
             featherPlayer,
             platform,
-            hello.getPlatformMods().stream()
-                .map(domain -> new PlatformMod(domain.getName(), domain.getVersion()))
-                .collect(Collectors.toList()),
+            Collections.emptyList(),
             hello.getFeatherMods().stream()
                 .map(domain -> new FeatherMod(domain.getName()))
                 .collect(Collectors.toList()));

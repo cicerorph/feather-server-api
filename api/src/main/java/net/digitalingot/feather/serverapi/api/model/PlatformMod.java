@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+@Deprecated
 public class PlatformMod {
   @NotNull private final String name;
   @NotNull private final String version;

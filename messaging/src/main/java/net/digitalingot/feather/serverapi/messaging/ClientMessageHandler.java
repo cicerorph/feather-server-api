@@ -1,5 +1,6 @@
 package net.digitalingot.feather.serverapi.messaging;
 
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CClearDiscordActivity;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CCreateFUI;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CDestroyFUI;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIMessage;
@@ -7,6 +8,7 @@ import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIRespon
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CGetEnabledMods;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CModsAction;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CServerBackground;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetDiscordActivity;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetFUIState;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWaypointCreate;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWaypointDestroy;
@@ -34,4 +36,8 @@ public interface ClientMessageHandler extends MessageHandler {
   void handle(S2CWaypointDestroy waypointDestroy);
 
   void handle(S2CWorldChange worldChange);
+
+  void handle(S2CSetDiscordActivity setDiscordActivity);
+
+  void handle(S2CClearDiscordActivity clearDiscordActivity);
 }

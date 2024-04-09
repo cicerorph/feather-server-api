@@ -1,5 +1,6 @@
 package net.digitalingot.feather.serverapi.messaging;
 
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CClearDiscordActivity;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CCreateFUI;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CDestroyFUI;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIMessage;
@@ -8,6 +9,7 @@ import net.digitalingot.feather.serverapi.messaging.messages.client.S2CGetEnable
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CHandshake;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CModsAction;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CServerBackground;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetDiscordActivity;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetFUIState;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWaypointCreate;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWaypointDestroy;
@@ -51,7 +53,9 @@ public enum Messages {
           .register(S2CWaypointCreate.class, S2CWaypointCreate::new)
           .register(S2CWaypointDestroy.class, S2CWaypointDestroy::new)
           .register(S2CWorldChange.class, S2CWorldChange::new)
-          .register(S2CServerBackground.class, S2CServerBackground::new));
+          .register(S2CServerBackground.class, S2CServerBackground::new)
+          .register(S2CSetDiscordActivity.class, S2CSetDiscordActivity::new)
+          .register(S2CClearDiscordActivity.class, S2CClearDiscordActivity::new));
 
   private final MessageRegistry<?> registry;
 

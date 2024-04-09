@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.digitalingot.feather.serverapi.api.FeatherAPI;
 import net.digitalingot.feather.serverapi.api.event.player.PlayerHelloEvent;
+import net.digitalingot.feather.serverapi.api.meta.DiscordActivity;
 import net.digitalingot.feather.serverapi.api.model.FeatherMod;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.api.ui.UIPage;
@@ -153,6 +154,15 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
               FeatherAPI.getUIService().createPageForPlayer(event.getPlayer(), this.page);
 
               createSpawnLocationWaypoint(event.getPlayer());
+
+              // Update the Discord activity icon
+              FeatherAPI.getMetaService()
+                  .updateDiscordActivity(
+                      event.getPlayer(),
+                      DiscordActivity.builder()
+                          .withImage("https://images.feathercdn.net/hqgfBhXr.png")
+                          .withImageText("My Server")
+                          .build());
             });
   }
 

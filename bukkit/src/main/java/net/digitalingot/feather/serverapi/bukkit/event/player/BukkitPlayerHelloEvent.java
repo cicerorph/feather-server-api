@@ -3,7 +3,6 @@ package net.digitalingot.feather.serverapi.bukkit.event.player;
 import net.digitalingot.feather.serverapi.api.event.player.PlayerHelloEvent;
 import net.digitalingot.feather.serverapi.api.model.FeatherMod;
 import net.digitalingot.feather.serverapi.api.model.Platform;
-import net.digitalingot.feather.serverapi.api.model.PlatformMod;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.bukkit.event.BukkitFeatherEvent;
 import org.bukkit.event.HandlerList;
@@ -16,17 +15,14 @@ public class BukkitPlayerHelloEvent extends BukkitFeatherEvent implements Player
   private static final HandlerList HANDLER_LIST = new HandlerList();
 
   @NotNull private final Platform platform;
-  @NotNull private final Collection<PlatformMod> platformMods;
   @NotNull private final Collection<FeatherMod> featherMods;
 
   public BukkitPlayerHelloEvent(
       @NotNull FeatherPlayer player,
       @NotNull Platform platform,
-      @NotNull Collection<PlatformMod> platformMods,
       @NotNull Collection<FeatherMod> featherMods) {
     super(player);
     this.platform = platform;
-    this.platformMods = platformMods;
     this.featherMods = featherMods;
   }
 
@@ -38,12 +34,6 @@ public class BukkitPlayerHelloEvent extends BukkitFeatherEvent implements Player
   @Override
   public Platform getPlatform() {
     return this.platform;
-  }
-
-  @NotNull
-  @Override
-  public Collection<PlatformMod> getPlatformMods() {
-    return Collections.unmodifiableCollection(this.platformMods);
   }
 
   @NotNull

@@ -110,7 +110,6 @@ public class BukkitMessagingService implements Listener {
         new BukkitPlayerHelloEvent(
             featherPlayer,
             platform,
-            Collections.emptyList(),
             hello.getFeatherMods().stream()
                 .map(domain -> new FeatherMod(domain.getName()))
                 .collect(Collectors.toList()));

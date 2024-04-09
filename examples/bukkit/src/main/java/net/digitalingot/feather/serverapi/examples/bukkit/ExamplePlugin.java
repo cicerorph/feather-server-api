@@ -131,14 +131,6 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
 
               getLogger()
                   .info(
-                      "Platform Mods ("
-                          + event.getPlatformMods().size()
-                          + "): "
-                          + event.getPlatformMods().stream()
-                              .map(mod -> mod.getName() + ":" + mod.getVersion())
-                              .collect(Collectors.joining(", ")));
-              getLogger()
-                  .info(
                       "Feather Mods ("
                           + event.getFeatherMods().size()
                           + "): "

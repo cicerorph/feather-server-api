@@ -1,6 +1,5 @@
 plugins {
     id("feather-server-api.java-conventions")
-    id("feather-server-api.publishing-conventions")
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -22,6 +21,14 @@ dependencies {
 tasks.withType<Jar> {
     archiveBaseName.set("feather-server-api")
     archiveClassifier.set("bukkit")
+}
+
+tasks.jar {
+    enabled = false
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
 
 tasks.processResources {

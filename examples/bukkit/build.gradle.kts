@@ -23,6 +23,7 @@ dependencies {
 }
 
 tasks.withType<ProcessResources> {
+    dependsOn(externalResources)
     from(externalResources.files)
     files("plugin.yml") {
         expand("version" to project.version)

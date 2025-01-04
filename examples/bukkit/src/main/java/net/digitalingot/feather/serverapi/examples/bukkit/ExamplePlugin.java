@@ -165,11 +165,11 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
     FeatherAPI.getWaypointService()
         .createWaypoint(
             featherPlayer,
-            spawnLocation.getBlockX(),
-            spawnLocation.getBlockY(),
-            spawnLocation.getBlockZ(),
-            WaypointColor.chroma(),
-            "Spawn Location");
+            FeatherAPI.getWaypointService()
+                .createWaypointBuilder(
+                    spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ())
+                .withColor(WaypointColor.chroma())
+                .withName("Spawn Location"));
   }
 
   @SuppressWarnings("deprecation")

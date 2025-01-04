@@ -2,7 +2,6 @@ package net.digitalingot.feather.serverapi.messaging.messages.client;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import net.digitalingot.feather.serverapi.messaging.ClientMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.Message;

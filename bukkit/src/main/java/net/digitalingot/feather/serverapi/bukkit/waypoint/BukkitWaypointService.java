@@ -3,7 +3,9 @@ package net.digitalingot.feather.serverapi.bukkit.waypoint;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
+
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
+import net.digitalingot.feather.serverapi.api.waypoint.WaypointBuilder;
 import net.digitalingot.feather.serverapi.api.waypoint.WaypointColor;
 import net.digitalingot.feather.serverapi.api.waypoint.WaypointDuration;
 import net.digitalingot.feather.serverapi.api.waypoint.WaypointService;
@@ -11,6 +13,7 @@ import net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin;
 import net.digitalingot.feather.serverapi.bukkit.event.player.BukkitPlayerHelloEvent;
 import net.digitalingot.feather.serverapi.bukkit.player.BukkitFeatherPlayer;
 import net.digitalingot.feather.serverapi.bukkit.player.BukkitPlayerService;
+import net.digitalingot.feather.serverapi.common.waypoints.DefaultWaypointBuilder;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWaypointCreate;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWaypointDestroy;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CWorldChange;
@@ -64,8 +67,27 @@ public class BukkitWaypointService implements WaypointService, Listener {
             color.isChroma(),
             color.getRgba(),
             name,
-            duration.getDuration()));
+            duration.getDurationInSeconds()));
     return waypointId;
+  }
+
+  @Override
+  public @NotNull WaypointBuilder createWaypointBuilder(int posX, int posY, int posZ) {
+    return new DefaultWaypointBuilder(posX, posY, posZ);
+  }
+
+  @Override
+  public @NotNull UUID createWaypoint(
+      @NotNull FeatherPlayer player, @NotNull WaypointBuilder builder) {
+    DefaultWaypointBuilder defaultWaypointBuilder = (DefaultWaypointBuilder) builder;
+    return createWaypoint(
+        player,
+        defaultWaypointBuilder.getPosX(),
+        defaultWaypointBuilder.getPosY(),
+        defaultWaypointBuilder.getPosZ(),
+        defaultWaypointBuilder.getColor(),
+        defaultWaypointBuilder.getName(),
+        defaultWaypointBuilder.getDuration());
   }
 
   @Override

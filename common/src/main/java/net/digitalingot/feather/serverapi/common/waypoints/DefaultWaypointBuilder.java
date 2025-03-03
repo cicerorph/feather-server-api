@@ -1,12 +1,11 @@
 package net.digitalingot.feather.serverapi.common.waypoints;
 
+import java.util.UUID;
 import net.digitalingot.feather.serverapi.api.waypoint.WaypointBuilder;
 import net.digitalingot.feather.serverapi.api.waypoint.WaypointColor;
 import net.digitalingot.feather.serverapi.api.waypoint.WaypointDuration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 public class DefaultWaypointBuilder implements WaypointBuilder {
 

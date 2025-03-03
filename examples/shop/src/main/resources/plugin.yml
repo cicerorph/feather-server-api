@@ -1,0 +1,26 @@
+name: ServerShop
+version: "${version}"
+main: net.digitalingot.feather.serverapi.examples.shop.ShopPlugin
+api-version: 1.16
+depend: [ FeatherServerAPI ]
+softdepend: [ Vault ]
+description: A comprehensive server shop system using Feather UI
+authors: [ Feather ]
+
+commands:
+  shop:
+    description: Open the server shop UI or manage shop items
+    usage: /shop [reload|add|remove|edit|help]
+    aliases: [ servershop, market ]
+    permission: shop.use
+
+permissions:
+  shop.use:
+    description: Allows players to use the shop
+    default: true
+  shop.admin:
+    description: Allows players to manage the shop
+    default: op
+  shop.bypass.limit:
+    description: Allows players to bypass purchase quantity limits
+    default: op

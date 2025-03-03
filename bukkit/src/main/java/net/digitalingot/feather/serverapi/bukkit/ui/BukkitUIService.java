@@ -1,6 +1,7 @@
 package net.digitalingot.feather.serverapi.bukkit.ui;
 
 import com.google.common.collect.Maps;
+import java.util.Map;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.api.ui.UIPage;
 import net.digitalingot.feather.serverapi.api.ui.UIService;
@@ -16,8 +17,6 @@ import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetFUISta
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class BukkitUIService implements UIService {
 

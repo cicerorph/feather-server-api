@@ -1,25 +1,23 @@
 package net.digitalingot.feather.serverapi.bukkit.player;
 
 import com.google.common.collect.Sets;
-import net.digitalingot.feather.serverapi.api.model.FeatherMod;
-import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
-import net.digitalingot.feather.serverapi.bukkit.messaging.BukkitMessagingService;
-import net.digitalingot.feather.serverapi.bukkit.ui.rpc.RpcService;
-import net.digitalingot.feather.serverapi.messaging.Message;
-import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CModsAction;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CServerBackground;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import net.digitalingot.feather.serverapi.api.model.FeatherMod;
+import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
+import net.digitalingot.feather.serverapi.bukkit.messaging.BukkitMessagingService;
+import net.digitalingot.feather.serverapi.bukkit.ui.rpc.RpcService;
+import net.digitalingot.feather.serverapi.messaging.Message;
+import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CMissPenaltyState;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CModsAction;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
 
 public class BukkitFeatherPlayer implements FeatherPlayer {
 
@@ -81,6 +79,11 @@ public class BukkitFeatherPlayer implements FeatherPlayer {
   @Override
   public @NotNull CompletableFuture<@NotNull Collection<@NotNull FeatherMod>> getEnabledMods() {
     return this.messageHandler.requestEnabledMods();
+  }
+
+  @Override
+  public void bypassMissPenalty(boolean enabled) {
+    sendMessage(new S2CMissPenaltyState(!enabled));
   }
 
   private void sendModsAction(

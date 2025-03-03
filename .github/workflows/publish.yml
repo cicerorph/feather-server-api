@@ -27,7 +27,8 @@ jobs:
         if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         run: ./gradlew publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACTORY_USERNAME: ${{ vars.ARTIFACTORY_USERNAME }}
+          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
       - name: Version
         run: |
           VERSION=${GITHUB_REF_NAME#v}
@@ -38,3 +39,4 @@ jobs:
         with:
           files: |
             bukkit/build/libs/feather-server-api-${{ env.VERSION }}-bukkit.jar
+            examples/shop/build/libs/feather-server-api-example-shop-${{ env.VERSION }}-bukkit.jar

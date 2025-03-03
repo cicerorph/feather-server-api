@@ -1,10 +1,5 @@
 package net.digitalingot.feather.serverapi.messaging;
 
-import net.digitalingot.feather.serverapi.messaging.exception.MessageException;
-import net.digitalingot.feather.serverapi.messaging.exception.OverflowException;
-import org.jetbrains.annotations.ApiStatus.Internal;
-import org.jetbrains.annotations.Nullable;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -13,6 +8,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.IntFunction;
+import net.digitalingot.feather.serverapi.messaging.exception.MessageException;
+import net.digitalingot.feather.serverapi.messaging.exception.OverflowException;
+import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SimpleMessageBuffer implements MessageBuffer {
   private static final int MAX_BUFFER_SIZE = 32766;
@@ -121,7 +121,7 @@ public class SimpleMessageBuffer implements MessageBuffer {
 
   @Override
   public String readUtf() {
-    return readUtf(Short.MAX_VALUE);
+    return readUtf(Integer.MAX_VALUE);
   }
 
   @Override
@@ -143,12 +143,12 @@ public class SimpleMessageBuffer implements MessageBuffer {
   }
 
   @Override
-  public MessageWriter writeUtf(String string) {
-    return writeUtf(string, Short.MAX_VALUE);
+  public MessageWriter writeUtf(@NotNull String string) {
+    return writeUtf(string, Integer.MAX_VALUE);
   }
 
   @Override
-  public MessageWriter writeUtf(String string, int limit) {
+  public MessageWriter writeUtf(@NotNull String string, int limit) {
     if (string.length() > limit) {
       throw new OverflowException("String", string.length(), limit);
     }
@@ -202,7 +202,7 @@ public class SimpleMessageBuffer implements MessageBuffer {
     return new UUID(this.readLong(), this.readLong());
   }
 
-  public MessageWriter writeUUID(UUID value) {
+  public MessageWriter writeUUID(@NotNull UUID value) {
     this.writeLong(value.getMostSignificantBits());
     this.writeLong(value.getLeastSignificantBits());
     return this;
@@ -214,7 +214,7 @@ public class SimpleMessageBuffer implements MessageBuffer {
   }
 
   @Override
-  public <T> MessageWriter writeOptional(@Nullable T value, Encoder<T> encoder) {
+  public <T> MessageWriter writeOptional(@Nullable T value, @NotNull Encoder<T> encoder) {
     if (value != null) {
       writeBool(true);
       encoder.accept(this, value);
@@ -225,7 +225,7 @@ public class SimpleMessageBuffer implements MessageBuffer {
   }
 
   @Override
-  public <E extends Enum<E>> MessageWriter writeEnum(Enum<E> value) {
+  public <E extends Enum<E>> MessageWriter writeEnum(@NotNull Enum<E> value) {
     writeVarInt(value.ordinal());
     return this;
   }
@@ -303,7 +303,8 @@ public class SimpleMessageBuffer implements MessageBuffer {
   }
 
   @Override
-  public <T> MessageWriter writeCollection(Collection<T> items, Encoder<T> encoder) {
+  public <T> MessageWriter writeCollection(
+      @NotNull Collection<T> items, @NotNull Encoder<T> encoder) {
     writeVarInt(items.size());
     items.forEach(item -> encoder.accept(this, item));
     return this;

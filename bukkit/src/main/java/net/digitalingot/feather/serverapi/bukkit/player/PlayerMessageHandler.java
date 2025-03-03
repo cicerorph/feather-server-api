@@ -3,6 +3,11 @@ package net.digitalingot.feather.serverapi.bukkit.player;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalCause;
+import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 import net.digitalingot.feather.serverapi.api.FeatherAPI;
 import net.digitalingot.feather.serverapi.api.meta.ServerListBackground;
 import net.digitalingot.feather.serverapi.api.model.FeatherMod;
@@ -19,12 +24,6 @@ import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIReques
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIStateChange;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SRequestServerBackground;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 class PlayerMessageHandler implements ServerMessageHandler {
   private final int REQUEST_TIMEOUT_SECONDS = 30;

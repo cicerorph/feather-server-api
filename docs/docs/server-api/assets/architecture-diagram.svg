@@ -1,0 +1,73 @@
+<svg viewBox="0 0 800 360" xmlns="http://www.w3.org/2000/svg">
+  <!-- Server Section -->
+  <rect x="50" y="10" width="300" height="300" fill="#1a2635" stroke="#7289da" stroke-width="2" rx="5" ry="5" />
+  <text x="200" y="40" font-family="Arial" font-size="18" text-anchor="middle" fill="#e2e8f0">Minecraft Server</text>
+  
+  <!-- Bukkit Plugin Container -->
+  <rect x="80" y="60" width="240" height="220" fill="#2d3748" stroke="#4a5568" stroke-width="1" rx="5" ry="5" />
+  <text x="200" y="85" font-family="Arial" font-size="14" text-anchor="middle" fill="#e2e8f0">Bukkit Server</text>
+  
+  <!-- Feather API Plugin -->
+  <rect x="100" y="100" width="200" height="70" fill="#1e462a" stroke="#48bb78" stroke-width="2" rx="5" ry="5" />
+  <text x="200" y="130" font-family="Arial" font-size="14" text-anchor="middle" fill="#9ae6b4">Feather API Plugin</text>
+  <text x="200" y="150" font-family="Arial" font-size="12" text-anchor="middle" fill="#e2e8f0">Exposes Feather Client services</text>
+  
+  <!-- Your Plugin -->
+  <rect x="100" y="192" width="200" height="70" fill="#3b2426" stroke="#f56565" stroke-width="2" rx="5" ry="5" />
+  <text x="200" y="222" font-family="Arial" font-size="14" text-anchor="middle" fill="#feb2b2">Your Plugin</text>
+  <text x="200" y="242" font-family="Arial" font-size="12" text-anchor="middle" fill="#e2e8f0">Uses Feather API</text>
+  
+  <!-- Clients Section -->
+  <rect x="450" y="10" width="300" height="300" fill="#25233a" stroke="#b794f4" stroke-width="2" rx="5" ry="5" />
+  <text x="600" y="40" font-family="Arial" font-size="18" text-anchor="middle" fill="#e2e8f0">Minecraft Clients</text>
+  
+  <!-- Feather Client -->
+  <rect x="480" y="70" width="240" height="100" fill="#1c3d5a" stroke="#63b3ed" stroke-width="2" rx="5" ry="5" />
+  <text x="600" y="100" font-family="Arial" font-size="14" text-anchor="middle" fill="#90cdf4">Feather Client</text>
+  <text x="600" y="120" font-family="Arial" font-size="12" text-anchor="middle" fill="#e2e8f0">Enhanced features</text>
+  <text x="600" y="140" font-family="Arial" font-size="12" text-anchor="middle" fill="#e2e8f0">Responds to API requests</text>
+  
+  <!-- Regular Client -->
+  <rect x="480" y="190" width="240" height="100" fill="#443b14" stroke="#ecc94b" stroke-width="2" rx="5" ry="5" />
+  <text x="600" y="235" font-family="Arial" font-size="14" text-anchor="middle" fill="#faf089">Regular Minecraft Client</text>
+  <text x="600" y="255" font-family="Arial" font-size="12" text-anchor="middle" fill="#e2e8f0">Standard experience only</text>
+  
+  <!-- Connection Lines -->
+  <!-- Feather Client Connection -->
+  <line x1="350" y1="120" x2="480" y2="120" stroke="#63b3ed" stroke-width="3" stroke-dasharray="5,5" />
+  <polygon points="470,115 480,120 470,125" fill="#63b3ed" />
+  <text x="410" y="110" font-family="Arial" font-size="12" text-anchor="middle" fill="#90cdf4">Enhanced features</text>
+  
+  <!-- Regular Client Connection -->
+  <line x1="350" y1="240" x2="480" y2="240" stroke="#ecc94b" stroke-width="3" stroke-dasharray="5,5" />
+  <polygon points="470,235 480,240 470,245" fill="#ecc94b" />
+  <text x="410" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#faf089">Standard protocol</text>
+  
+  <!-- API Connection -->
+  <line x1="200" y1="170" x2="200" y2="192" stroke="#4299e1" stroke-width="2" />
+  <polygon points="195,187 200,192 205,187" fill="#4299e1" />
+  <text x="215" y="181" font-family="Arial" font-size="10" text-anchor="start" fill="#90cdf4">API</text>
+
+  <!-- Legend  -->
+  <rect x="50" y="320" width="700" height="30" fill="#2d3748" stroke="#4a5568" stroke-width="1" rx="5" ry="5" />
+  
+  <!-- Item 1 -->
+  <circle cx="70" cy="335" r="5" fill="#63b3ed" />
+  <text x="80" y="339" font-family="Arial" font-size="12" text-anchor="start" fill="#e2e8f0">Feather Protocol</text>
+  
+  <!-- Item 2 -->
+  <circle cx="190" cy="335" r="5" fill="#ecc94b" />
+  <text x="200" y="339" font-family="Arial" font-size="12" text-anchor="start" fill="#e2e8f0">Standard Protocol</text>
+  
+  <!-- Item 3 -->
+  <rect x="330" y="330" width="10" height="10" fill="#1e462a" stroke="#48bb78" stroke-width="1" />
+  <text x="345" y="339" font-family="Arial" font-size="12" text-anchor="start" fill="#e2e8f0">Feather API Plugin</text>
+  
+  <!-- Item 4 -->
+  <rect x="470" y="330" width="10" height="10" fill="#3b2426" stroke="#f56565" stroke-width="1" />
+  <text x="485" y="339" font-family="Arial" font-size="12" text-anchor="start" fill="#e2e8f0">Your Server Plugin</text>
+  
+  <!-- Item 5 -->
+  <rect x="610" y="330" width="10" height="10" fill="#1c3d5a" stroke="#63b3ed" stroke-width="1" />
+  <text x="625" y="339" font-family="Arial" font-size="12" text-anchor="start" fill="#e2e8f0">Feather Client</text>
+</svg>

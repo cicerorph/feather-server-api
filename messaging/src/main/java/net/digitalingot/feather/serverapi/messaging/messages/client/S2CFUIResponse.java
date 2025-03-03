@@ -4,6 +4,7 @@ import net.digitalingot.feather.serverapi.messaging.ClientMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.MessageReader;
 import net.digitalingot.feather.serverapi.messaging.MessageWriter;
+import org.jetbrains.annotations.NotNull;
 
 public class S2CFUIResponse implements Message<ClientMessageHandler> {
   private final int id;
@@ -14,7 +15,7 @@ public class S2CFUIResponse implements Message<ClientMessageHandler> {
   // output
   private byte[] payloadAsBytes;
 
-  public S2CFUIResponse(int id, boolean found, String payload) {
+  public S2CFUIResponse(int id, boolean found, @NotNull String payload) {
     this.id = id;
     this.found = found;
     this.payload = payload;

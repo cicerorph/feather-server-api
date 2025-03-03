@@ -1,6 +1,11 @@
 package net.digitalingot.feather.serverapi.bukkit.messaging;
 
-import java.util.Collections;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import net.digitalingot.feather.serverapi.api.model.FeatherMod;
 import net.digitalingot.feather.serverapi.api.model.Platform;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
@@ -28,12 +33,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.messaging.Messenger;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class BukkitMessagingService implements Listener {
   private static final String CHANNEL = "feather:client";
@@ -129,11 +128,22 @@ public class BukkitMessagingService implements Listener {
     if (recipients.isEmpty()) {
       return;
     }
+
     byte[] encoded = MessageEncoder.CLIENT_BOUND.encode(message);
-    for (FeatherPlayer recipient : recipients) {
-      ((BukkitFeatherPlayer) recipient)
-          .getPlayer()
-          .sendPluginMessage(this.plugin, CHANNEL, encoded);
+
+    if (encoded.length > Messenger.MAX_MESSAGE_SIZE) {
+      List<byte[]> fragments = MessageFragmenter.CLIENT_BOUND.fragment(message);
+
+      for (FeatherPlayer recipient : recipients) {
+        for (byte[] data : fragments) {
+          sendPluginMessage(
+              ((BukkitFeatherPlayer) recipient).getPlayer(), CHANNEL_FRAGMENTED, data);
+        }
+      }
+    } else {
+      for (FeatherPlayer recipient : recipients) {
+        sendPluginMessage(((BukkitFeatherPlayer) recipient).getPlayer(), CHANNEL, encoded);
+      }
     }
   }
 
@@ -142,12 +152,15 @@ public class BukkitMessagingService implements Listener {
 
     if (encoded.length > Messenger.MAX_MESSAGE_SIZE) {
       for (byte[] data : MessageFragmenter.CLIENT_BOUND.fragment(message)) {
-        player.sendPluginMessage(this.plugin, CHANNEL_FRAGMENTED, data);
+        sendPluginMessage(player, CHANNEL_FRAGMENTED, data);
       }
-      return;
+    } else {
+      sendPluginMessage(player, CHANNEL, encoded);
     }
+  }
 
-    player.sendPluginMessage(this.plugin, CHANNEL, encoded);
+  private void sendPluginMessage(@NotNull Player player, @NotNull String channel, byte[] data) {
+    player.sendPluginMessage(this.plugin, channel, data);
   }
 
   private static class Handshaking implements Listener {

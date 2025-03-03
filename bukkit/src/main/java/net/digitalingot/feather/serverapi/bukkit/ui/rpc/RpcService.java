@@ -1,5 +1,13 @@
 package net.digitalingot.feather.serverapi.bukkit.ui.rpc;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.logging.Logger;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcController;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcHandler;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcRequest;
@@ -15,22 +23,14 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.logging.Logger;
-
 public class RpcService {
 
-  public final Logger logger;
-
+  private final FeatherBukkitPlugin plugin;
+  private final Logger logger;
   private final Map<String, RpcHost> rpcHosts;
 
   public RpcService(FeatherBukkitPlugin plugin) {
+    this.plugin = plugin;
     this.logger = plugin.getLogger();
     this.rpcHosts = new HashMap<>();
     plugin.getServer().getPluginManager().registerEvents(new HandlerReaper(), plugin);
@@ -141,12 +141,13 @@ public class RpcService {
 
   public void handle(
       BukkitFeatherPlayer player, String rpcHostName, String rpcName, int requestId, String body) {
-    RegisteredRpcHandler handler = this.getRpcHandler(rpcHostName, rpcName);
+    RegisteredRpcHandler handler = getRpcHandler(rpcHostName, rpcName);
 
     if (handler != null) {
       try {
         handler.invoke(
-            new BukkitRpcRequest(player, body), new BukkitRpcResponse(requestId, player));
+            new BukkitRpcRequest(player, body),
+            new BukkitRpcResponse(requestId, player, this.plugin));
       } catch (Throwable throwable) {
         this.logger.warning("Error occurred handling RPC request");
         throwable.printStackTrace();

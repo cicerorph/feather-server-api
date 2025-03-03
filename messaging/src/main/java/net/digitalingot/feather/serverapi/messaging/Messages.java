@@ -1,5 +1,11 @@
 package net.digitalingot.feather.serverapi.messaging;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.function.Function;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CClearDiscordActivity;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CCreateFUI;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CDestroyFUI;
@@ -7,6 +13,7 @@ import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIMessag
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIResponse;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CGetEnabledMods;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CHandshake;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CMissPenaltyState;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CModsAction;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CServerBackground;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetDiscordActivity;
@@ -22,13 +29,6 @@ import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIStateC
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SHandshake;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SRequestServerBackground;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.function.Function;
 
 public enum Messages {
   SERVER_BOUND(
@@ -55,7 +55,8 @@ public enum Messages {
           .register(S2CWorldChange.class, S2CWorldChange::new)
           .register(S2CServerBackground.class, S2CServerBackground::new)
           .register(S2CSetDiscordActivity.class, S2CSetDiscordActivity::new)
-          .register(S2CClearDiscordActivity.class, S2CClearDiscordActivity::new));
+          .register(S2CClearDiscordActivity.class, S2CClearDiscordActivity::new)
+          .register(S2CMissPenaltyState.class, S2CMissPenaltyState::new));
 
   private final MessageRegistry<?> registry;
 

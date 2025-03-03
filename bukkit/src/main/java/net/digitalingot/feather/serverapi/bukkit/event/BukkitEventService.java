@@ -1,6 +1,8 @@
 package net.digitalingot.feather.serverapi.bukkit.event;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+import java.util.function.Consumer;
 import net.digitalingot.feather.serverapi.api.event.EventService;
 import net.digitalingot.feather.serverapi.api.event.EventSubscription;
 import net.digitalingot.feather.serverapi.api.event.FeatherEvent;
@@ -11,9 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
-import java.util.function.Consumer;
 
 public class BukkitEventService implements EventService {
   private static final EventPriority DEFAULT_PRIORITY = EventPriority.NORMAL;

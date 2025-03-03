@@ -4,18 +4,24 @@ plugins {
 
 publishing {
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("mavenJava") {
             from(components["java"])
         }
     }
 
     repositories {
         maven {
-            name = "GithubPackages"
-            url = uri("https://maven.pkg.github.com/FeatherMC/feather-server-api")
+            name = "Artifactory"
+            url = if (version.toString().endsWith("SNAPSHOT")) {
+                uri("https://repo.feathermc.net/artifactory/maven-snapshots/")
+            } else {
+                uri("https://repo.feathermc.net/artifactory/maven-releases/")
+            }
             credentials {
-                username = project.findProperty("gpr.user") as? String ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("gpr.key") as? String ?: System.getenv("GITHUB_TOKEN")
+                username =
+                    project.findProperty("artifactory.username") as? String ?: System.getenv("ARTIFACTORY_USERNAME")
+                password =
+                    project.findProperty("artifactory.password") as? String ?: System.getenv("ARTIFACTORY_PASSWORD")
             }
         }
     }

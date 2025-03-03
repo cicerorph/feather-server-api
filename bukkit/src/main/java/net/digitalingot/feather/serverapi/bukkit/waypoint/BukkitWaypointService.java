@@ -3,7 +3,6 @@ package net.digitalingot.feather.serverapi.bukkit.waypoint;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
-
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.api.waypoint.WaypointBuilder;
 import net.digitalingot.feather.serverapi.api.waypoint.WaypointColor;

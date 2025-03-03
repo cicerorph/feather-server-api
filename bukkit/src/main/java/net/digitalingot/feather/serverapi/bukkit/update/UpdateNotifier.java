@@ -1,5 +1,6 @@
 package net.digitalingot.feather.serverapi.bukkit.update;
 
+import java.util.UUID;
 import net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin;
 import net.digitalingot.feather.serverapi.messaging.MessageConstants;
 import org.bukkit.Bukkit;
@@ -8,8 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import java.util.UUID;
 
 public class UpdateNotifier implements Listener {
   private static final String NOTIFY_PERMISSION = "feather-server-api.notify";

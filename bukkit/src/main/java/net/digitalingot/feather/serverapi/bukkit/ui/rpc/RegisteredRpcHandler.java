@@ -1,16 +1,15 @@
 package net.digitalingot.feather.serverapi.bukkit.ui.rpc;
 
-import net.digitalingot.feather.serverapi.api.ui.rpc.RpcController;
-import net.digitalingot.feather.serverapi.api.ui.rpc.RpcRequest;
-import net.digitalingot.feather.serverapi.api.ui.rpc.RpcResponse;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.invoke.CallSite;
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import net.digitalingot.feather.serverapi.api.ui.rpc.RpcController;
+import net.digitalingot.feather.serverapi.api.ui.rpc.RpcRequest;
+import net.digitalingot.feather.serverapi.api.ui.rpc.RpcResponse;
+import org.jetbrains.annotations.NotNull;
 
 class RegisteredRpcHandler {
   @NotNull public final RpcHandlerExecutor executor;

@@ -20,16 +20,27 @@ public class S2CSetDiscordActivity implements Message<ClientMessageHandler> {
   @Nullable private final String imageText;
   @Nullable private final String state;
   @Nullable private final String details;
+  @Nullable private final Long partyData; // Combined partySize and partyMax
+  @Nullable private final Long startTimestamp;
+  @Nullable private final Long endTimestamp;
 
   public S2CSetDiscordActivity(
       @Nullable String image,
       @Nullable String imageText,
       @Nullable String state,
-      @Nullable String details) {
+      @Nullable String details,
+      @Nullable Integer partySize,
+      @Nullable Integer partyMax,
+      @Nullable Long startTimestamp,
+      @Nullable Long endTimestamp) {
     this.image = image;
     this.imageText = imageText;
     this.state = state;
     this.details = details;
+    this.partyData =
+        (partySize != null && partyMax != null) ? encodePartyData(partySize, partyMax) : null;
+    this.startTimestamp = startTimestamp;
+    this.endTimestamp = endTimestamp;
   }
 
   public S2CSetDiscordActivity(MessageReader reader) {
@@ -37,6 +48,9 @@ public class S2CSetDiscordActivity implements Message<ClientMessageHandler> {
     this.imageText = reader.readOptional(LIMITED_STRING_DECODER).orElse(null);
     this.state = reader.readOptional(LIMITED_STRING_DECODER).orElse(null);
     this.details = reader.readOptional(LIMITED_STRING_DECODER).orElse(null);
+    this.partyData = reader.readOptional(MessageReader::readLong).orElse(null);
+    this.startTimestamp = reader.readOptional(MessageReader::readLong).orElse(null);
+    this.endTimestamp = reader.readOptional(MessageReader::readLong).orElse(null);
   }
 
   @Override
@@ -45,6 +59,9 @@ public class S2CSetDiscordActivity implements Message<ClientMessageHandler> {
     writer.writeOptional(this.imageText, LIMITED_STRING_ENCODER);
     writer.writeOptional(this.state, LIMITED_STRING_ENCODER);
     writer.writeOptional(this.details, LIMITED_STRING_ENCODER);
+    writer.writeOptional(this.partyData, MessageWriter::writeLong);
+    writer.writeOptional(this.startTimestamp, MessageWriter::writeLong);
+    writer.writeOptional(this.endTimestamp, MessageWriter::writeLong);
   }
 
   @Override
@@ -66,5 +83,52 @@ public class S2CSetDiscordActivity implements Message<ClientMessageHandler> {
 
   public Optional<String> getDetails() {
     return Optional.ofNullable(this.details);
+  }
+
+  public Optional<Integer> getPartySize() {
+    return Optional.ofNullable(this.partyData).map(S2CSetDiscordActivity::getPartySizeFromData);
+  }
+
+  public Optional<Integer> getPartyMax() {
+    return Optional.ofNullable(this.partyData).map(S2CSetDiscordActivity::getPartyMaxFromData);
+  }
+
+  public Optional<Long> getStartTimestamp() {
+    return Optional.ofNullable(this.startTimestamp);
+  }
+
+  public Optional<Long> getEndTimestamp() {
+    return Optional.ofNullable(this.endTimestamp);
+  }
+
+  /**
+   * Encodes party size and party max into a single long value.
+   *
+   * @param size The current party size
+   * @param max The maximum party size
+   * @return A long containing both values
+   */
+  private static long encodePartyData(int size, int max) {
+    return (((long) size) << 32) | (max & 0xFFFFFFFFL);
+  }
+
+  /**
+   * Extracts the party size from the encoded party data.
+   *
+   * @param partyData The encoded party data
+   * @return The party size
+   */
+  private static int getPartySizeFromData(long partyData) {
+    return (int) (partyData >> 32);
+  }
+
+  /**
+   * Extracts the party max from the encoded party data.
+   *
+   * @param partyData The encoded party data
+   * @return The party max
+   */
+  private static int getPartyMaxFromData(long partyData) {
+    return (int) partyData;
   }
 }

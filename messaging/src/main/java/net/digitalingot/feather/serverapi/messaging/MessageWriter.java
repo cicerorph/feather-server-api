@@ -1,18 +1,18 @@
 package net.digitalingot.feather.serverapi.messaging;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import org.jetbrains.annotations.NotNull;
 
 public interface MessageWriter {
   MessageWriter writeInt(int value);
 
   MessageWriter writeVarInt(int value);
 
-  MessageWriter writeUtf(String string);
+  MessageWriter writeUtf(@NotNull String string);
 
-  MessageWriter writeUtf(String string, int limit);
+  MessageWriter writeUtf(@NotNull String string, int limit);
 
   MessageWriter writeByte(byte value);
 
@@ -22,15 +22,15 @@ public interface MessageWriter {
 
   MessageWriter writeBool(boolean value);
 
-  <T> MessageWriter writeCollection(Collection<T> items, Encoder<T> encoder);
+  <T> MessageWriter writeCollection(@NotNull Collection<T> items, @NotNull Encoder<T> encoder);
 
-  <E extends Enum<E>> MessageWriter writeEnum(Enum<E> value);
+  <E extends Enum<E>> MessageWriter writeEnum(@NotNull Enum<E> value);
 
   MessageWriter writeLong(long value);
 
-  MessageWriter writeUUID(UUID value);
+  MessageWriter writeUUID(@NotNull UUID value);
 
-  <T> MessageWriter writeOptional(T value, Encoder<T> encoder);
+  <T> MessageWriter writeOptional(@NotNull T value, @NotNull Encoder<T> encoder);
 
   @FunctionalInterface
   interface Encoder<T> extends BiConsumer<MessageWriter, T> {}

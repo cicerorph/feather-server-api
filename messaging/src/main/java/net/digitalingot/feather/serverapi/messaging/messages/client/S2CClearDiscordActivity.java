@@ -7,16 +7,15 @@ import net.digitalingot.feather.serverapi.messaging.MessageWriter;
 
 public class S2CClearDiscordActivity implements Message<ClientMessageHandler> {
 
-    public S2CClearDiscordActivity() {}
+  public S2CClearDiscordActivity() {}
 
-    public S2CClearDiscordActivity(MessageReader reader) {}
+  public S2CClearDiscordActivity(MessageReader reader) {}
 
-    @Override
-    public void write(MessageWriter writer) {
-    }
+  @Override
+  public void write(MessageWriter writer) {}
 
-    @Override
-    public void handle(ClientMessageHandler handler) {
-        handler.handle(this);
-    }
+  @Override
+  public void handle(ClientMessageHandler handler) {
+    handler.handle(this);
+  }
 }

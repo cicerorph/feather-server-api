@@ -1,12 +1,11 @@
 package net.digitalingot.feather.serverapi.messaging.messages.client;
 
+import java.util.Collection;
 import net.digitalingot.feather.serverapi.messaging.ClientMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.MessageReader;
 import net.digitalingot.feather.serverapi.messaging.MessageWriter;
 import net.digitalingot.feather.serverapi.messaging.domain.FeatherMod;
-
-import java.util.Collection;
 
 public class S2CModsAction implements Message<ClientMessageHandler> {
   private final Action action;

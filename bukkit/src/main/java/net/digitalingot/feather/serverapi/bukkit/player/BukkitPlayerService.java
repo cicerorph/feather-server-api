@@ -1,5 +1,10 @@
 package net.digitalingot.feather.serverapi.bukkit.player;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.api.player.PlayerService;
 import net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin;
@@ -11,12 +16,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class BukkitPlayerService implements PlayerService, Listener {
   private final PluginManager pluginManager;

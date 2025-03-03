@@ -1,12 +1,11 @@
 package net.digitalingot.feather.serverapi.messaging.messages.server;
 
+import java.util.Collection;
 import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.MessageReader;
 import net.digitalingot.feather.serverapi.messaging.MessageWriter;
 import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.domain.FeatherMod;
-
-import java.util.Collection;
 
 public class C2SEnabledMods implements Message<ServerMessageHandler> {
   private final int id;

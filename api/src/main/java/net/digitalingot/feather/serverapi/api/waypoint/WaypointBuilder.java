@@ -1,9 +1,8 @@
 package net.digitalingot.feather.serverapi.api.waypoint;
 
+import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 /** Builder for creating waypoints. */
 public interface WaypointBuilder {

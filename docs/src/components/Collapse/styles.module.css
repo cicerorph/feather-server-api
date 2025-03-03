@@ -1,0 +1,31 @@
+.collapse {
+    --docusaurus-details-decoration-color: rgba(221, 53, 56, 0.9);
+    --docusaurus-details-transition: transform var(--ifm-transition-fast) ease;
+    margin: 0 0 var(--ifm-spacing-vertical);
+    border: 1px solid rgba(74, 74, 74, 0.5);
+
+    --ifm-code-background: var(--ifm-collapse-code-bg-color);
+    --ifm-link-color: var(--ifm-collapse-foreground-color);
+    --ifm-link-hover-color: var(--ifm-collapse-foreground-color);
+    --ifm-link-decoration: underline;
+    --ifm-tabs-color: var(--ifm-collapse-foreground-color);
+    --ifm-tabs-color-active: var(--ifm-collapse-foreground-color);
+    --ifm-tabs-color-active-border: inherit;
+
+    background-color: rgba(13, 16, 18, 0.3);
+    border-radius: var(--ifm-global-radius);
+    box-shadow: var(--ifm-global-shadow-lw);
+    color: var(--ifm-collapse-foreground-color);
+    padding: var(--ifm-spacing-vertical) var(--ifm-spacing-horizontal);
+
+    --ifm-collapse-foreground-color: rgb(238, 249, 253);
+    --ifm-collapse-code-bg-color: rgba(0, 0, 0, 0.3);
+}
+
+.collapse > summary {
+  font-weight: bold;
+}
+
+.collapse code {
+  background-color: var(--ifm-collapse-code-bg-color);
+}

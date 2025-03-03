@@ -6,6 +6,7 @@ import net.digitalingot.feather.serverapi.messaging.messages.client.S2CDestroyFU
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIMessage;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIResponse;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CGetEnabledMods;
+import net.digitalingot.feather.serverapi.messaging.messages.client.S2CMissPenaltyState;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CModsAction;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CServerBackground;
 import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetDiscordActivity;
@@ -40,4 +41,6 @@ public interface ClientMessageHandler extends MessageHandler {
   void handle(S2CSetDiscordActivity setDiscordActivity);
 
   void handle(S2CClearDiscordActivity clearDiscordActivity);
+
+  void handle(S2CMissPenaltyState missPenaltyState);
 }

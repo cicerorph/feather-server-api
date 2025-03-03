@@ -1,5 +1,6 @@
 package net.digitalingot.feather.serverapi.bukkit.ui;
 
+import java.util.Objects;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.api.ui.UIPage;
 import net.digitalingot.feather.serverapi.api.ui.handler.UIFocusHandler;
@@ -9,8 +10,6 @@ import net.digitalingot.feather.serverapi.api.ui.handler.UIVisibilityHandler;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class BukkitUIPage
     implements UIPage, UILifecycleHandler, UILoadHandler, UIFocusHandler, UIVisibilityHandler {
@@ -102,14 +101,14 @@ public class BukkitUIPage
   }
 
   @Override
-  public void onShow(FeatherPlayer player) {
+  public void onShow(@NotNull FeatherPlayer player) {
     if (this.visibilityHandler != null) {
       this.visibilityHandler.onShow(player);
     }
   }
 
   @Override
-  public void onHide(FeatherPlayer player) {
+  public void onHide(@NotNull FeatherPlayer player) {
     if (this.visibilityHandler != null) {
       this.visibilityHandler.onHide(player);
     }

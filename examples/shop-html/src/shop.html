@@ -1,0 +1,2332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Shop</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-hover: #45a049;
+            --secondary-color: #2196F3;
+            --danger-color: #f44336;
+            --bg-color: rgba(0, 0, 0, 0.8);
+            --panel-color: rgba(51, 51, 51, 0.95);
+            --border-color: #444;
+            --scrollbar-width: 8px;
+            --text-color: #ffffff;
+            --text-secondary: #aaaaaa;
+            --gold-color: gold;
+            --item-bg-hover: rgba(255, 255, 255, 0.2);
+            --item-bg: rgba(255, 255, 255, 0.1);
+            --transition-speed: 0.2s;
+            --border-radius: 6px;
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            --balance-increase: #4CAF50;
+            --balance-decrease: #f44336;
+        }    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        color: var(--text-color);
+        background-color: transparent;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        user-select: none;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    #scale-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: center center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        will-change: transform;
+    }
+
+    ::-webkit-scrollbar {
+        width: var(--scrollbar-width);
+        height: var(--scrollbar-width);
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1);
+    }
+
+    .shop-container {
+        display: flex;
+        width: 1200px;
+        height: 800px;
+        background-color: var(--bg-color);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--box-shadow);
+        position: relative;
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sidebar {
+        width: 25%;
+        min-width: 180px;
+        background-color: var(--panel-color);
+        border-right: 1px solid var(--border-color);
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+        padding: 20px 10px;
+        transition: transform 0.3s ease;
+        contain: content;
+    }
+
+    .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        max-width: calc(100% - 180px);
+        overflow: hidden;
+        position: relative;
+        contain: content;
+    }
+
+    .shop-header {
+        padding: 15px 20px;
+        background-color: var(--panel-color);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+        height: 60px;
+        will-change: contents;
+    }
+
+    .shop-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .shop-balance {
+        font-size: 1.1rem;
+        color: var(--gold-color);
+        transition: color 0.3s;
+        will-change: color;
+    }
+
+    @keyframes balanceIncrease {
+        0%, 100% { color: var(--balance-increase); }
+        50% { color: white; }
+    }
+
+    @keyframes balanceDecrease {
+        0%, 100% { color: var(--balance-decrease); }
+        50% { color: white; }
+    }
+
+    .shop-balance.increase {
+        animation: balanceIncrease 1s ease;
+    }
+
+    .shop-balance.decrease {
+        animation: balanceDecrease 1s ease;
+    }
+
+    .search-bar {
+        padding: 10px 20px;
+        background-color: var(--panel-color);
+        border-bottom: 1px solid var(--border-color);
+        flex-shrink: 0;
+        height: auto;
+    }
+
+    .search-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-filters {
+        display: flex;
+        gap: 10px;
+    }
+
+    .custom-dropdown {
+        position: relative;
+        flex: 1;
+        z-index: 10;
+    }
+
+    .dropdown-selected {
+        padding: 8px 12px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        color: var(--text-color);
+        font-family: inherit;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: border-color var(--transition-speed), background-color var(--transition-speed);
+    }
+
+    .dropdown-selected:hover {
+        border-color: var(--primary-color);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .dropdown-selected::after {
+        content: '▼';
+        font-size: 0.75rem;
+        margin-left: 10px;
+        transition: transform 0.2s ease;
+    }
+
+    .dropdown-open .dropdown-selected::after {
+        transform: rotate(180deg);
+    }
+
+    .dropdown-options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        margin-top: 4px;
+        background-color: var(--panel-color);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        display: none;
+        box-shadow: var(--box-shadow);
+        transform-origin: top center;
+        animation: dropdownFade 0.2s ease;
+    }
+
+    @keyframes dropdownFade {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-open .dropdown-options {
+        display: block;
+    }
+
+    .dropdown-option {
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color var(--transition-speed);
+        user-select: none;
+    }
+
+    .dropdown-option:hover {
+        background-color: var(--item-bg-hover);
+    }
+
+    .dropdown-option.selected {
+        background-color: var(--primary-color);
+        font-weight: bold;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 8px 12px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        color: var(--text-color);
+        font-family: inherit;
+        transition: border-color var(--transition-speed), background-color var(--transition-speed);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .items-container {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+        position: relative;
+        contain: content;
+        will-change: contents;
+    }
+
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 5;
+        animation: fadeIn 0.2s ease;
+    }
+
+    .loading-text {
+        margin-top: 15px;
+        font-size: 1.1rem;
+        color: var(--text-color);
+    }
+
+    .item-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+        padding-bottom: 20px;
+        contain: content;
+    }
+
+    .item-grid .shop-item {
+        opacity: 0;
+        animation: fadeIn 0.3s ease forwards;
+        contain: layout;
+    }
+
+    .item-grid .shop-item.no-animation {
+        animation: none;
+        opacity: 1;
+    }
+
+    .category-title {
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 1.3rem;
+    }
+
+    .search-results-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .back-to-categories {
+        color: var(--secondary-color);
+        cursor: pointer;
+        transition: color var(--transition-speed), transform var(--transition-speed);
+        display: flex;
+        align-items: center;
+    }
+
+    .back-to-categories::before {
+        content: "←";
+        margin-right: 5px;
+    }
+
+    .back-to-categories:hover {
+        color: #64b5f6;
+        transform: translateX(-3px);
+    }
+
+    .category-item {
+        padding: 12px;
+        margin-bottom: 8px;
+        background-color: var(--item-bg);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color var(--transition-speed), transform var(--transition-speed);
+        display: flex;
+        align-items: center;
+        border-left: 3px solid transparent;
+        contain: content;
+    }
+
+    .category-item:hover {
+        background-color: var(--item-bg-hover);
+        border-left-color: var(--primary-color);
+        transform: translateX(3px);
+    }
+
+    .category-item.active {
+        background-color: var(--primary-color);
+        border-left-color: white;
+    }
+
+    .category-icon {
+        margin-right: 10px;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .shop-item {
+        background-color: var(--panel-color);
+        border-radius: var(--border-radius);
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid var(--border-color);
+        position: relative;
+        transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        will-change: transform, box-shadow;
+        contain: content;
+    }
+
+    .shop-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+    }
+
+    .shop-item .item-description {
+        display: none;
+        position: absolute;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 10px;
+        border-radius: var(--border-radius);
+        width: 220px;
+        top: 0;
+        left: 105%;
+        z-index: 100;
+        font-size: 0.875rem;
+        box-shadow: var(--box-shadow);
+        pointer-events: none;
+        border: 1px solid var(--border-color);
+        line-height: 1.5;
+        animation: tooltipFade 0.2s ease;
+        transform: translateX(0);
+        will-change: transform, opacity;
+    }
+
+    @keyframes tooltipFade {
+        from { opacity: 0; transform: translateX(-10px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .shop-item:nth-last-child(-n+3) .item-description,
+    .shop-item:hover:nth-last-child(-n+3) .item-description {
+        right: 105%;
+        left: auto;
+    }
+
+    .shop-item:hover .item-description::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent rgba(0, 0, 0, 0.9) transparent transparent;
+        transform: rotate(180deg);
+    }
+
+    .shop-item:nth-last-child(-n+3) .item-description::before,
+    .shop-item:hover:nth-last-child(-n+3) .item-description::before {
+        left: auto;
+        right: -5px;
+        transform: rotate(0);
+    }
+
+    .shop-item:hover .item-description {
+        display: block;
+    }
+
+    .item-image {
+        width: 48px;
+        height: 48px;
+        background-color: #555;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 6px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .item-name {
+        margin-bottom: 10px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+        line-height: 1.2;
+        max-height: 2.4rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        width: 100%;
+    }
+
+    .item-price {
+        margin-bottom: 5px;
+        color: var(--gold-color);
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .item-quantity {
+        margin-bottom: 10px;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+
+    .item-buttons {
+        display: flex;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .buy-button, .sell-button {
+        padding: 6px 8px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: bold;
+        flex: 1;
+        font-size: 0.75rem;
+        transition: background-color var(--transition-speed), transform var(--transition-speed);
+        will-change: transform;
+    }
+
+    .buy-button {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .buy-button:hover:not([disabled]) {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+    .sell-button {
+        background-color: var(--danger-color);
+        color: white;
+    }
+
+    .sell-button:hover:not([disabled]) {
+        background-color: #d32f2f;
+        transform: translateY(-2px);
+    }
+
+    .buy-button[disabled], .sell-button[disabled] {
+        background-color: #666;
+        color: #aaa;
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none !important;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+    }
+
+    .modal-content {
+        background-color: var(--panel-color);
+        padding: 25px;
+        border-radius: var(--border-radius);
+        width: 90%;
+        max-width: 400px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        will-change: transform;
+    }
+
+    .modal-header {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+        color: var(--text-color);
+    }
+
+    .modal-body {
+        margin-bottom: 20px;
+    }
+
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    .quantity-button {
+        padding: 8px 15px;
+        background-color: var(--secondary-color);
+        border: none;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1rem;
+        border-radius: 4px;
+        transition: background-color var(--transition-speed), transform var(--transition-speed);
+    }
+
+    .quantity-button:hover {
+        background-color: #0b7dda;
+        transform: scale(1.05);
+    }
+
+    .quantity-input {
+        width: 80px;
+        padding: 8px;
+        text-align: center;
+        margin: 0 10px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        color: white;
+        font-family: inherit;
+        font-size: 1rem;
+        border-radius: 4px;
+    }
+
+    .quantity-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+
+    .quantity-total {
+        text-align: center;
+        font-size: 1.1rem;
+        color: var(--gold-color);
+        margin-top: 15px;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .modal-button {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: bold;
+        transition: background-color var(--transition-speed), transform var(--transition-speed);
+        will-change: transform;
+    }
+
+    .confirm-button {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .confirm-button:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+    .cancel-button {
+        background-color: #555;
+        color: white;
+    }
+
+    .cancel-button:hover {
+        background-color: #666;
+        transform: translateY(-2px);
+    }
+
+    .loading-spinner {
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 3px solid var(--primary-color);
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-right: 10px;
+        vertical-align: middle;
+        will-change: transform;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        pointer-events: none;
+        width: 300px;
+    }
+
+    .notification {
+        padding: 15px 20px;
+        border-radius: var(--border-radius);
+        color: white;
+        font-weight: bold;
+        margin-bottom: 10px;
+        pointer-events: auto;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        position: relative;
+        animation: notificationEnter 0.3s forwards;
+        will-change: transform, opacity;
+    }
+
+    @keyframes notificationEnter {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .notification.success {
+        background-color: var(--primary-color);
+        border-left: 5px solid #2e7d32;
+    }
+
+    .notification.error {
+        background-color: var(--danger-color);
+        border-left: 5px solid #b71c1c;
+    }
+
+    .notification-close {
+        position: absolute;
+        top: 5px;
+        right: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        background: none;
+        border: none;
+        color: white;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .notification-close:hover {
+        opacity: 1;
+    }
+
+    .notification.removing {
+        animation: notificationExit 0.3s forwards;
+    }
+
+    @keyframes notificationExit {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+    }
+
+    [data-tooltip] {
+        position: relative;
+    }
+
+    [data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 100;
+        pointer-events: none;
+        margin-bottom: 5px;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    .dropdown-selected:focus-visible {
+        outline: 2px solid var(--secondary-color);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 1200px) {
+        .item-grid {
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        }
+    }
+    </style>
+</head>
+<body>
+<div id="scale-container">
+    <div id="shop-app"></div>
+</div>
+<div id="notification-container" class="notification-container"></div>
+<script>
+    (function() {
+        const REFERENCE_WIDTH = 1920;
+        const REFERENCE_HEIGHT = 1080;
+
+        const DOM = {
+            shopApp: null,
+            notificationContainer: null,
+            scaleContainer: null,
+            itemsContainer: null,
+            sidebar: null,
+            searchInput: null,
+            balanceElement: null,
+            createElement(tag, className, attributes = {}) {
+                const el = document.createElement(tag);
+                if (className) {
+                    el.className = className;
+                }
+                Object.entries(attributes).forEach(([key, value]) => {
+                    if (key === 'content') {
+                        el.textContent = value;
+                    } else if (key === 'html') {
+                        el.innerHTML = value;
+                    } else {
+                        el.setAttribute(key, value);
+                    }
+                });
+                return el;
+            },
+            fragment() {
+                return document.createDocumentFragment();
+            }
+        };
+
+        const NOTIFICATION_DURATION = {
+            SUCCESS: 6000,
+            ERROR: 6000,
+            LOADING: 0
+        };
+
+        const createObservableState = (initialState) => {
+            const subscribers = new Map();
+            let activeSubscriptionCount = 0;
+
+            const notifySubscribers = (property, newValue, oldValue) => {
+                if (!activeSubscriptionCount) return;
+
+                const propertySubscribers = subscribers.get(property);
+                if (propertySubscribers) {
+                    propertySubscribers.forEach(callback =>
+                        callback(newValue, oldValue));
+                }
+
+                const globalSubscribers = subscribers.get('*');
+                if (globalSubscribers) {
+                    globalSubscribers.forEach(callback =>
+                        callback({ property, newValue, oldValue }));
+                }
+            };
+
+            const state = new Proxy(initialState, {
+                get: (target, property) => {
+                    if (property === 'subscribe') {
+                        return (prop, callback) => {
+                            if (!subscribers.has(prop)) {
+                                subscribers.set(prop, new Set());
+                            }
+                            subscribers.get(prop).add(callback);
+                            activeSubscriptionCount++;
+
+                            return () => {
+                                const subs = subscribers.get(prop);
+                                if (subs && subs.has(callback)) {
+                                    subs.delete(callback);
+                                    activeSubscriptionCount--;
+
+                                    if (subs.size === 0) {
+                                        subscribers.delete(prop);
+                                    }
+                                }
+                            };
+                        };
+                    }
+
+                    if (property === 'batchUpdate') {
+                        return (updateFn) => {
+                            const originalState = { ...target };
+                            updateFn(target);
+
+                            Object.keys(target).forEach(key => {
+                                if (target[key] !== originalState[key]) {
+                                    notifySubscribers(key, target[key], originalState[key]);
+                                }
+                            });
+                        };
+                    }
+
+                    return target[property];
+                },
+                set: (target, property, value) => {
+                    const oldValue = target[property];
+
+                    if (oldValue === value) return true;
+
+                    target[property] = value;
+
+                    notifySubscribers(property, value, oldValue);
+
+                    return true;
+                }
+            });
+
+            return state;
+        };
+
+        const state = createObservableState({
+            categories: [],
+            currentCategory: null,
+            currentItems: [],
+            searchResults: null,
+            balance: 0,
+            loading: false,
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight,
+            scaleFactor: 1,
+            activeNotifications: {},
+            notificationCounter: 0,
+            lastFocusedItem: null,
+            dropdowns: {
+                sort: { value: 'name', open: false },
+                filter: { value: 'all', open: false }
+            },
+            existingItemIds: new Set(),
+            previousBalance: 0,
+            modalOpen: false
+        });
+
+        const ErrorHandler = {
+            handle(error, context, showNotification = true) {
+                console.error(`Error in ${context}:`, error);
+
+                if (showNotification) {
+                    const message = this.getUserFriendlyMessage(error, context);
+                    window.showNotification(message, 'error');
+                }
+            },
+
+            getUserFriendlyMessage(error, context) {
+                const errorMap = {
+                    'fetchCategoryItems': 'We couldn\'t load the items. Please try again.',
+                    'buyItem': 'There was an issue completing your purchase. Please try again.',
+                    'sellItem': 'There was an issue completing your sale. Please try again.',
+                    'searchItems': 'We couldn\'t complete your search. Please try again.'
+                };
+
+                return errorMap[context] || 'Something went wrong. Please try again.';
+            }
+        };
+
+        const ShopService = (() => {
+            const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeout);
+
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+
+                clearTimeout(id);
+                return response;
+            };
+
+            const fetchAPI = async (endpoint, method = 'GET', data = null, context = 'api') => {
+                try {
+                    const options = {
+                        method,
+                        headers: {}
+                    };
+
+                    if (data) {
+                        if (typeof data === 'object') {
+                            options.body = JSON.stringify(data);
+                            options.headers['Content-Type'] = 'application/json';
+                        } else {
+                            options.body = data;
+                        }
+                    }
+
+                    const response = await fetchWithTimeout(
+                        `https://${window.resourceName}/${endpoint}`,
+                        options
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    return result;
+                } catch (error) {
+                    ErrorHandler.handle(error, context);
+                    throw error;
+                }
+            };
+
+            return {
+                async getCategoryItems(categoryId) {
+                    return fetchAPI('getCategory', 'POST', { categoryId }, 'fetchCategoryItems');
+                },
+
+                async searchItems(query) {
+                    return fetchAPI('searchItems', 'POST', query, 'searchItems');
+                },
+
+                async buyItem(categoryId, itemId, quantity) {
+                    return fetchAPI('buyItem', 'POST', {
+                        categoryId,
+                        itemId,
+                        quantity
+                    }, 'buyItem');
+                },
+
+                async sellItem(categoryId, itemId, quantity) {
+                    return fetchAPI('sellItem', 'POST', {
+                        categoryId,
+                        itemId,
+                        quantity
+                    }, 'sellItem');
+                },
+            };
+        })();
+
+        const UI = {
+            cacheElements() {
+                DOM.shopApp = document.getElementById('shop-app');
+                DOM.notificationContainer = document.getElementById('notification-container');
+                DOM.scaleContainer = document.getElementById('scale-container');
+                DOM.itemsContainer = document.getElementById('items-container');
+                DOM.sidebar = document.getElementById('categories-sidebar');
+                DOM.searchInput = document.getElementById('search-input');
+                DOM.balanceElement = document.getElementById('player-balance');
+            },
+
+            renderCategories(categories, currentCategoryId) {
+                if (!DOM.sidebar) return;
+
+                if (!categories || categories.length === 0) {
+                    DOM.sidebar.innerHTML = '<div class="empty-message">No categories available</div>';
+                    return;
+                }
+
+                const fragment = DOM.fragment();
+                const activeCategoryId = currentCategoryId;
+
+                categories.forEach((category, index) => {
+                    const isActive = activeCategoryId && activeCategoryId === category.id;
+                    const categoryItem = DOM.createElement('div',
+                        `category-item${isActive ? ' active' : ''}`,
+                        {
+                            'data-category-id': category.id,
+                            'role': 'button',
+                            'tabindex': '0',
+                            'aria-selected': isActive ? 'true' : 'false',
+                            'style': `animation-delay: ${index * 0.05}s`
+                        }
+                    );
+
+                    categoryItem.innerHTML = `
+                        <div class="category-icon">${category.icon || category.name.charAt(0)}</div>
+                        <div class="category-name">${category.name}</div>
+                    `;
+
+                    categoryItem.addEventListener('click', () => loadCategory(category.id));
+                    categoryItem.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            loadCategory(category.id);
+                        }
+                    });
+
+                    fragment.appendChild(categoryItem);
+                });
+
+                DOM.sidebar.innerHTML = '';
+                DOM.sidebar.appendChild(fragment);
+            },
+
+            renderItems(categoryName, items) {
+                if (!DOM.itemsContainer) return;
+
+                if (!items || items.length === 0) {
+                    DOM.itemsContainer.innerHTML = '<div class="empty-message">No items available in this category</div>';
+                    state.existingItemIds.clear();
+                    return;
+                }
+
+                const fragment = DOM.fragment();
+                let html = '';
+
+                html += `<h2 class="category-title">${categoryName}</h2>`;
+                html += '<div class="item-grid" role="grid">';
+
+                const newItemIds = new Set();
+
+                items.forEach(item => {
+                    newItemIds.add(item.id);
+
+                    const itemClassList = ['shop-item'];
+
+                    if (state.existingItemIds.has(item.id)) {
+                        itemClassList.push('no-animation');
+                    } else {
+                        const animationDelay = 'animation-delay: 0.05s;';
+                        itemClassList.push(`style="${animationDelay}"`);
+                    }
+
+                    html += this.generateItemHTML(item, state.currentCategory.id, itemClassList.join(' '));
+                });
+
+                html += '</div>';
+
+                DOM.itemsContainer.innerHTML = html;
+                state.existingItemIds = newItemIds;
+                this.setupItemEventDelegation();
+            },
+
+            renderSearchResults(query, results) {
+                if (!DOM.itemsContainer) return;
+
+                let html = `
+                    <div class="search-results-header">
+                        <h2>Search Results for "${query}"${results && results.length ? ` (${results.length})` : ''}</h2>
+                        <span class="back-to-categories" role="button" tabindex="0" id="back-to-categories">Back to Categories</span>
+                    </div>
+                `;
+
+                if (!results || results.length === 0) {
+                    html += '<div class="empty-message">No items found matching your search</div>';
+
+                    DOM.itemsContainer.innerHTML = html;
+                    state.existingItemIds.clear();
+                    this.setupBackButtonHandler();
+                    return;
+                }
+
+                const newItemIds = new Set();
+
+                html += '<div class="item-grid" role="grid">';
+
+                results.forEach(item => {
+                    newItemIds.add(item.id);
+
+                    const itemClassList = ['shop-item'];
+
+                    if (state.existingItemIds.has(item.id)) {
+                        itemClassList.push('no-animation');
+                    } else {
+                        const animationDelay = 'animation-delay: 0.05s;';
+                        itemClassList.push(`style="${animationDelay}"`);
+                    }
+
+                    html += this.generateItemHTML(item, item.categoryId, itemClassList.join(' '));
+                });
+
+                html += '</div>';
+
+                DOM.itemsContainer.innerHTML = html;
+                state.existingItemIds = newItemIds;
+                this.setupBackButtonHandler();
+                this.setupItemEventDelegation();
+            },
+
+            generateItemHTML(item, categoryId, classesStr = 'shop-item') {
+                const canBuy = item.buyPrice !== undefined;
+                const canSell = item.sellPrice !== undefined && (item.playerQuantity || 0) > 0;
+                const hasDescription = item.description !== undefined && item.description.length > 0;
+                const canAfford = canBuy && state.balance >= item.buyPrice;
+
+                let description = hasDescription ? item.description : '';
+                if (item.maxPurchase) {
+                    description += description ? '<br><br>' : '';
+                    description += `<em>Limited to ${item.maxPurchase} per purchase</em>`;
+                }
+
+                if (description || canBuy || item.sellPrice !== undefined) {
+                    description += description ? '<br><br>' : '';
+                    if (canBuy) {
+                        description += `Buy price: $${item.buyPrice.toFixed(2)}<br>`;
+                        if (!canAfford) {
+                            description += `<span style="color: #ff6b6b">You need $${(item.buyPrice - state.balance).toFixed(2)} more</span><br>`;
+                        }
+                    }
+                    if (item.sellPrice !== undefined) {
+                        description += `Sell price: $${item.sellPrice.toFixed(2)}<br>`;
+                    }
+                    description += `You have: ${item.playerQuantity || 0}`;
+                }
+
+                return `
+                    <div class="${classesStr}" data-item-id="${item.id}" data-category-id="${categoryId}" role="gridcell" tabindex="0">
+                        <div class="item-description" role="tooltip" id="tooltip-${item.id}">${description}</div>
+                        <div class="item-image" title="${item.material || ''}">${item.name.charAt(0)}</div>
+                        <div class="item-name">${item.name}</div>
+                        ${canBuy ? `<div class="item-price">Buy: $${item.buyPrice.toFixed(2)}</div>` : ''}
+                        ${item.sellPrice !== undefined ? `<div class="item-price">Sell: $${item.sellPrice.toFixed(2)}</div>` : ''}
+                        <div class="item-quantity">You have: ${item.playerQuantity || 0}</div>
+                        <div class="item-buttons">
+                            ${canBuy ? `
+                                <button class="buy-button" data-action="buy" ${!canAfford ? 'disabled' : ''}
+                                    ${!canAfford ? 'data-tooltip="Not enough money"' : ''}
+                                    aria-label="Buy ${item.name}">
+                                    Buy
+                                </button>
+                            ` : ''}
+                            ${item.sellPrice !== undefined ? `
+                                <button class="sell-button" data-action="sell" ${!canSell ? 'disabled' : ''}
+                                    ${!canSell ? 'data-tooltip="You don\'t have any to sell"' : ''}
+                                    aria-label="Sell ${item.name}">
+                                    Sell
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            },
+
+            setupItemEventDelegation() {
+                if (!DOM.itemsContainer) return;
+
+                DOM.itemsContainer.removeEventListener('click', this._itemClickHandler);
+                DOM.itemsContainer.removeEventListener('keydown', this._itemKeyHandler);
+
+                this._itemClickHandler = (event) => {
+                    if (event.target.classList.contains('buy-button') && !event.target.disabled) {
+                        event.stopPropagation();
+                        const itemElement = event.target.closest('.shop-item');
+                        if (itemElement) {
+                            handleItemAction(itemElement, 'buy');
+                        }
+                    }
+                    else if (event.target.classList.contains('sell-button') && !event.target.disabled) {
+                        event.stopPropagation();
+                        const itemElement = event.target.closest('.shop-item');
+                        if (itemElement) {
+                            handleItemAction(itemElement, 'sell');
+                        }
+                    }
+                };
+
+                this._itemKeyHandler = (event) => {
+                    if (!event.target.classList.contains('shop-item')) return;
+
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+
+                        const buyButton = event.target.querySelector('.buy-button:not([disabled])');
+                        if (buyButton) {
+                            handleItemAction(event.target, 'buy');
+                            return;
+                        }
+
+                        const sellButton = event.target.querySelector('.sell-button:not([disabled])');
+                        if (sellButton) {
+                            handleItemAction(event.target, 'sell');
+                        }
+                    }
+                };
+
+                DOM.itemsContainer.addEventListener('click', this._itemClickHandler);
+                DOM.itemsContainer.addEventListener('keydown', this._itemKeyHandler);
+            },
+
+            setupBackButtonHandler() {
+                const backButton = document.getElementById('back-to-categories');
+                if (!backButton) return;
+
+                const handler = (event) => {
+                    if (event.type === 'click' || event.key === 'Enter' || event.key === ' ') {
+                        if (event.type !== 'click') event.preventDefault();
+                        backToCategories();
+                    }
+                };
+
+                backButton.addEventListener('click', handler);
+                backButton.addEventListener('keydown', handler);
+            },
+
+            renderSearchControls() {
+                const searchBarContainer = document.querySelector('.search-bar');
+                if (!searchBarContainer) return;
+
+                searchBarContainer.innerHTML = `
+                    <div class="search-controls">
+                        <input type="text" class="search-input" id="search-input"
+                               placeholder="Search items..."
+                               aria-label="Search items">
+                        <div class="search-filters">
+                            <div class="custom-dropdown" id="sort-dropdown">
+                                <div class="dropdown-selected" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                                    Sort by Name
+                                </div>
+                                <div class="dropdown-options" role="listbox" id="sort-options">
+                                    <div class="dropdown-option selected" role="option" aria-selected="true" data-value="name">
+                                        Sort by Name
+                                    </div>
+                                    <div class="dropdown-option" role="option" aria-selected="false" data-value="price-low">
+                                        Price: Low to High
+                                    </div>
+                                    <div class="dropdown-option" role="option" aria-selected="false" data-value="price-high">
+                                        Price: High to Low
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="custom-dropdown" id="filter-dropdown">
+                                <div class="dropdown-selected" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                                    All Items
+                                </div>
+                                <div class="dropdown-options" role="listbox" id="filter-options">
+                                    <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all">
+                                        All Items
+                                    </div>
+                                    <div class="dropdown-option" role="option" aria-selected="false" data-value="can-buy">
+                                        Can Afford
+                                    </div>
+                                    <div class="dropdown-option" role="option" aria-selected="false" data-value="can-sell">
+                                        Can Sell
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                DOM.searchInput = document.getElementById('search-input');
+
+                if (DOM.searchInput) {
+                    DOM.searchInput.addEventListener('input', debounce(function() {
+                        const query = this.value.trim();
+                        if (query.length >= 2) {
+                            searchItems(query);
+                        } else if (query.length === 0 && state.searchResults) {
+                            backToCategories();
+                        }
+                    }, 300));
+
+                    DOM.searchInput.addEventListener('keydown', function(event) {
+                        if (event.key === 'Escape') {
+                            this.value = '';
+                            if (state.searchResults) {
+                                backToCategories();
+                            }
+                        }
+                    });
+                }
+
+                this.setupCustomDropdowns();
+            },
+
+            setupCustomDropdowns() {
+                document.addEventListener('click', (event) => {
+                    if (!event.target.closest('.custom-dropdown')) {
+                        document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+                            dropdown.classList.remove('dropdown-open');
+                            const selected = dropdown.querySelector('.dropdown-selected');
+                            if (selected) selected.setAttribute('aria-expanded', 'false');
+                        });
+                        return;
+                    }
+
+                    if (event.target.classList.contains('dropdown-selected') ||
+                        event.target.closest('.dropdown-selected')) {
+                        const dropdown = event.target.closest('.custom-dropdown');
+                        this.toggleDropdown(dropdown);
+                        return;
+                    }
+
+                    if (event.target.classList.contains('dropdown-option')) {
+                        const dropdown = event.target.closest('.custom-dropdown');
+                        const dropdownId = dropdown.id;
+                        const value = event.target.getAttribute('data-value');
+                        const text = event.target.textContent.trim();
+
+                        this.selectDropdownOption(dropdown, event.target);
+
+                        if (dropdownId === 'sort-dropdown') {
+                            state.dropdowns.sort.value = value;
+                            applySearchFilters();
+                        } else if (dropdownId === 'filter-dropdown') {
+                            state.dropdowns.filter.value = value;
+                            applySearchFilters();
+                        }
+                    }
+                });
+
+                document.addEventListener('keydown', (event) => {
+                    const dropdown = event.target.closest('.custom-dropdown');
+                    if (!dropdown) return;
+
+                    if (event.target.classList.contains('dropdown-selected')) {
+                        if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+                            event.preventDefault();
+                            this.toggleDropdown(dropdown);
+                        } else if (event.key === 'Escape') {
+                            event.preventDefault();
+                            dropdown.classList.remove('dropdown-open');
+                            event.target.setAttribute('aria-expanded', 'false');
+                        }
+                        return;
+                    }
+
+                    if (event.target.classList.contains('dropdown-option')) {
+                        const options = [...dropdown.querySelectorAll('.dropdown-option')];
+                        const currentIndex = options.indexOf(event.target);
+
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            this.selectDropdownOption(dropdown, event.target);
+
+                            const dropdownId = dropdown.id;
+                            const value = event.target.getAttribute('data-value');
+
+                            if (dropdownId === 'sort-dropdown') {
+                                state.dropdowns.sort.value = value;
+                                applySearchFilters();
+                            } else if (dropdownId === 'filter-dropdown') {
+                                state.dropdowns.filter.value = value;
+                                applySearchFilters();
+                            }
+
+                        } else if (event.key === 'ArrowDown') {
+                            event.preventDefault();
+                            const nextIndex = (currentIndex + 1) % options.length;
+                            options[nextIndex].focus();
+                        } else if (event.key === 'ArrowUp') {
+                            event.preventDefault();
+                            const prevIndex = (currentIndex - 1 + options.length) % options.length;
+                            options[prevIndex].focus();
+                        } else if (event.key === 'Escape') {
+                            event.preventDefault();
+                            dropdown.classList.remove('dropdown-open');
+                            const selected = dropdown.querySelector('.dropdown-selected');
+                            if (selected) {
+                                selected.setAttribute('aria-expanded', 'false');
+                                selected.focus();
+                            }
+                        }
+                    }
+                });
+
+                document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+                    const id = dropdown.id;
+                    if (id === 'sort-dropdown' && state.dropdowns.sort) {
+                        const option = dropdown.querySelector(`.dropdown-option[data-value="${state.dropdowns.sort.value}"]`);
+                        if (option) {
+                            const selected = dropdown.querySelector('.dropdown-selected');
+                            if (selected) selected.textContent = option.textContent.trim();
+                        }
+                    } else if (id === 'filter-dropdown' && state.dropdowns.filter) {
+                        const option = dropdown.querySelector(`.dropdown-option[data-value="${state.dropdowns.filter.value}"]`);
+                        if (option) {
+                            const selected = dropdown.querySelector('.dropdown-selected');
+                            if (selected) selected.textContent = option.textContent.trim();
+                        }
+                    }
+                });
+            },
+
+            toggleDropdown(dropdown) {
+                if (!dropdown) return;
+
+                const selected = dropdown.querySelector('.dropdown-selected');
+                const isOpen = dropdown.classList.toggle('dropdown-open');
+
+                if (selected) {
+                    selected.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+                    if (isOpen) {
+                        const firstOption = dropdown.querySelector('.dropdown-option');
+                        if (firstOption) {
+                            setTimeout(() => firstOption.focus(), 10);
+                        }
+                    }
+                }
+            },
+
+            selectDropdownOption(dropdown, option) {
+                if (!dropdown || !option) return;
+
+                const selected = dropdown.querySelector('.dropdown-selected');
+                const allOptions = dropdown.querySelectorAll('.dropdown-option');
+                const value = option.getAttribute('data-value');
+                const text = option.textContent.trim();
+
+                if (selected) {
+                    selected.textContent = text;
+                }
+
+                allOptions.forEach(opt => {
+                    const isSelected = opt === option;
+                    opt.classList.toggle('selected', isSelected);
+                    opt.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                });
+
+                dropdown.classList.remove('dropdown-open');
+                if (selected) {
+                    selected.setAttribute('aria-expanded', 'false');
+                    selected.focus();
+                }
+            },
+
+            _loadingOverlays: new Map(),
+
+            showLoadingOverlay(container, message = 'Loading...') {
+                if (!container) return null;
+
+                let overlay = this._loadingOverlays.get(container);
+
+                if (!overlay) {
+                    overlay = DOM.createElement('div', 'loading-overlay');
+                    overlay.innerHTML = `
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">${message}</div>
+                    `;
+                    this._loadingOverlays.set(container, overlay);
+                } else {
+                    const textEl = overlay.querySelector('.loading-text');
+                    if (textEl) textEl.textContent = message;
+                }
+
+                if (!container.contains(overlay)) {
+                    container.appendChild(overlay);
+                }
+
+                return overlay;
+            },
+
+            removeLoadingOverlay(container) {
+                if (!container) return;
+
+                const overlay = this._loadingOverlays.get(container);
+                if (overlay && container.contains(overlay)) {
+                    container.removeChild(overlay);
+                }
+            },
+
+            updateBalance(balance, oldBalance) {
+                if (!DOM.balanceElement) return;
+
+                DOM.balanceElement.textContent = `Balance: $${balance.toFixed(2)}`;
+
+                if (oldBalance !== undefined && balance !== oldBalance) {
+                    DOM.balanceElement.classList.remove('increase', 'decrease');
+
+                    if (balance > oldBalance) {
+                        DOM.balanceElement.classList.add('increase');
+                    } else if (balance < oldBalance) {
+                        DOM.balanceElement.classList.add('decrease');
+                    }
+
+                    setTimeout(() => {
+                        DOM.balanceElement.classList.remove('increase', 'decrease');
+                    }, 1000);
+                }
+            },
+
+            createModal(content) {
+                const modalScaleWrapper = DOM.createElement('div', null, {
+                    id: 'modal-scale-wrapper',
+                    style: `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1000;
+                        transform: scale(${state.scaleFactor});
+                        transform-origin: center center;
+                    `
+                });
+
+                state.modalOpen = true;
+
+                modalScaleWrapper.innerHTML = content;
+                document.body.appendChild(modalScaleWrapper);
+
+                return modalScaleWrapper;
+            },
+
+            closeModal(modalWrapper) {
+                if (modalWrapper && modalWrapper.parentNode) {
+                    modalWrapper.remove();
+                    state.modalOpen = false;
+
+                    if (state.lastFocusedItem) {
+                        const itemElement = document.querySelector(
+                            `.shop-item[data-item-id="${state.lastFocusedItem.itemId}"][data-category-id="${state.lastFocusedItem.categoryId}"]`
+                        );
+                        if (itemElement) {
+                            setTimeout(() => itemElement.focus(), 10);
+                        }
+                    }
+                }
+            }
+        };
+
+        function handleItemAction(itemElement, action) {
+            if (state.modalOpen) return;
+
+            if (!itemElement) return;
+
+            const itemId = itemElement.getAttribute('data-item-id');
+            const categoryId = itemElement.getAttribute('data-category-id');
+
+            state.lastFocusedItem = {
+                itemId: itemId,
+                categoryId: categoryId
+            };
+
+            const items = state.searchResults ? state.searchResults.results : state.currentItems;
+            const item = items.find(item => item.id === itemId);
+
+            if (!item) return;
+
+            if (action === 'buy') {
+                createTransactionModal(item, categoryId, 'buy');
+            } else if (action === 'sell') {
+                createTransactionModal(item, categoryId, 'sell');
+            }
+        }
+
+        function createTransactionModal(item, categoryId, action) {
+            const isBuy = action === 'buy';
+            const price = isBuy ? item.buyPrice : item.sellPrice;
+            const title = isBuy ? `Buy ${item.name}` : `Sell ${item.name}`;
+
+            let maxQuantity;
+            if (isBuy) {
+                const maxAfford = Math.floor(state.balance / price);
+                maxQuantity = item.maxPurchase ? Math.min(maxAfford, item.maxPurchase) : maxAfford;
+            } else {
+                maxQuantity = item.playerQuantity || 0;
+            }
+
+            const quantityInfo = isBuy
+                ? `You can afford: ${Math.floor(state.balance / price)} items
+                   ${item.maxPurchase ? `<br>(Max per purchase: ${item.maxPurchase})` : ''}`
+                : `You have: ${maxQuantity} items`;
+
+            const modalHTML = `
+                <div class="modal-overlay" id="${action}-modal" role="dialog" aria-labelledby="${action}-modal-title">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="${action}-modal-title">${title}</h3>
+                        </div>
+                        <div class="modal-body">
+                            <p>How many would you like to ${action}?</p>
+                            <div class="quantity-selector">
+                                <button class="quantity-button" id="decrease-quantity" aria-label="Decrease quantity">-</button>
+                                <input type="number" class="quantity-input" id="quantity-input" value="1" min="1" max="${maxQuantity}" aria-label="Quantity">
+                                <button class="quantity-button" id="increase-quantity" aria-label="Increase quantity">+</button>
+                            </div>
+                            <div class="quantity-total">
+                                Total: $<span id="total-value">${price.toFixed(2)}</span>
+                            </div>
+                            <div class="quantity-total">
+                                ${quantityInfo}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="modal-button cancel-button" id="cancel-transaction">Cancel</button>
+                            <button class="modal-button confirm-button" id="confirm-transaction">${isBuy ? 'Buy' : 'Sell'}</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const modalWrapper = UI.createModal(modalHTML);
+
+            const quantityInput = document.getElementById('quantity-input');
+            const totalValueElement = document.getElementById('total-value');
+            const decreaseButton = document.getElementById('decrease-quantity');
+            const increaseButton = document.getElementById('increase-quantity');
+            const cancelButton = document.getElementById('cancel-transaction');
+            const confirmButton = document.getElementById('confirm-transaction');
+
+            function validateQuantity() {
+                let quantity = parseInt(quantityInput.value) || 1;
+                quantity = Math.max(1, Math.min(maxQuantity, quantity));
+                quantityInput.value = quantity;
+                return quantity;
+            }
+
+            function updateTotal() {
+                const quantity = validateQuantity();
+                const total = quantity * price;
+                totalValueElement.textContent = total.toFixed(2);
+                confirmButton.textContent = `${isBuy ? 'Buy' : 'Sell'} (${quantity})`;
+            }
+
+            decreaseButton.addEventListener('click', () => {
+                quantityInput.value = Math.max(1, parseInt(quantityInput.value) - 1);
+                updateTotal();
+            });
+
+            increaseButton.addEventListener('click', () => {
+                quantityInput.value = Math.min(maxQuantity, parseInt(quantityInput.value) + 1);
+                updateTotal();
+            });
+
+            quantityInput.addEventListener('input', updateTotal);
+
+            quantityInput.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    quantityInput.value = Math.min(maxQuantity, parseInt(quantityInput.value) + 1);
+                    updateTotal();
+                } else if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    quantityInput.value = Math.max(1, parseInt(quantityInput.value) - 1);
+                    updateTotal();
+                }
+            });
+
+            cancelButton.addEventListener('click', () => UI.closeModal(modalWrapper));
+
+            confirmButton.addEventListener('click', () => {
+                confirmButton.disabled = true;
+                const quantity = validateQuantity();
+
+                if (isBuy) {
+                    buyItem(categoryId, item.id, quantity);
+                } else {
+                    sellItem(categoryId, item.id, quantity);
+                }
+
+                UI.closeModal(modalWrapper);
+            });
+
+            updateTotal();
+
+            const escapeHandler = (event) => {
+                if (event.key === 'Escape') {
+                    UI.closeModal(modalWrapper);
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            };
+            document.addEventListener('keydown', escapeHandler);
+
+            setTimeout(() => {
+                if (quantityInput) {
+                    quantityInput.focus();
+                    quantityInput.select();
+                }
+            }, 100);
+        }
+
+        function init() {
+            renderApp();
+            UI.cacheElements();
+            UI.renderSearchControls();
+            setupEventListeners();
+            applyProportionalScaling();
+
+            state.subscribe('balance', (newBalance, oldBalance) => {
+                UI.updateBalance(newBalance, oldBalance);
+                updateBuyButtonStates();
+            });
+        }
+
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        function generateUniqueId(prefix) {
+            state.notificationCounter++;
+            return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 10000)}-${state.notificationCounter}`;
+        }
+
+        function applyProportionalScaling() {
+            const widthRatio = window.innerWidth / REFERENCE_WIDTH;
+            const heightRatio = window.innerHeight / REFERENCE_HEIGHT;
+            const percentage = Math.min(widthRatio, heightRatio);
+
+            if (percentage !== state.scaleFactor) {
+                state.scaleFactor = percentage;
+
+                DOM.scaleContainer.style.transform = `translate(-50%, -50%) scale(${percentage})`;
+
+                state.windowWidth = window.innerWidth;
+                state.windowHeight = window.innerHeight;
+
+                const modalWrapper = document.getElementById('modal-scale-wrapper');
+                if (modalWrapper) {
+                    modalWrapper.style.transform = `scale(${percentage})`;
+                }
+            }
+        }
+
+        function renderApp() {
+            const shopApp = document.getElementById('shop-app');
+
+            const shopHTML = `
+                <div class="shop-container">
+                    <div class="sidebar" id="categories-sidebar" role="navigation" aria-label="Categories">
+                        <div class="empty-message">
+                            <div class="loading-spinner"></div> Loading...
+                        </div>
+                    </div>
+                    <div class="main-content">
+                        <div class="shop-header">
+                            <div class="shop-title">Server Shop</div>
+                            <div class="shop-balance" id="player-balance">Balance: \$0.00</div>
+                        </div>
+                        <div class="search-bar" role="search">
+                        </div>
+                        <div class="items-container" id="items-container" role="main">
+                            <div class="empty-message">
+                                Select a category to view items
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            shopApp.innerHTML = shopHTML;
+        }
+
+        function setupEventListeners() {
+            const resizeHandler = debounce(applyProportionalScaling, 200);
+            window.addEventListener('resize', resizeHandler);
+
+            const escKeyHandler = function(event) {
+                if (event.key === 'Escape' && !state.modalOpen) {
+                    closeShop();
+                }
+            };
+            document.addEventListener('keydown', escKeyHandler);
+
+            const visibilityHandler = function() {
+                if (document.visibilityState === 'hidden') {
+                    closeShop();
+                }
+            };
+            document.addEventListener('visibilitychange', visibilityHandler);
+
+            const wheelHandler = function(event) {
+                const target = event.target;
+                let scrollableParent = findScrollableParent(target);
+
+                if (scrollableParent) {
+                    const { scrollTop, scrollHeight, clientHeight } = scrollableParent;
+
+                    if (
+                        (event.deltaY < 0 && scrollTop <= 0) ||
+                        (event.deltaY > 0 && scrollTop + clientHeight >= scrollHeight)
+                    ) {
+                        event.preventDefault();
+                    }
+                } else {
+                    event.preventDefault();
+                }
+            };
+            document.addEventListener('wheel', wheelHandler, { passive: false });
+
+            const messageHandler = function(event) {
+                handleServerMessage(event.data);
+            };
+            window.addEventListener('message', messageHandler);
+
+            const notificationClickHandler = function(event) {
+                if (event.target.classList.contains('notification-close')) {
+                    const notification = event.target.closest('.notification');
+                    if (notification) {
+                        removeNotification(notification.id);
+                    }
+                    return;
+                }
+
+                const notification = event.target.closest('.notification');
+                if (notification) {
+                    const notificationId = notification.id;
+                    if (state.activeNotifications[notificationId] && !state.activeNotifications[notificationId].loading) {
+                        removeNotification(notificationId);
+                    }
+                }
+            };
+            DOM.notificationContainer.addEventListener('click', notificationClickHandler);
+        }
+
+        const scrollableParentCache = new WeakMap();
+
+        function findScrollableParent(element) {
+            if (!element || element === document.body) return null;
+
+            if (scrollableParentCache.has(element)) {
+                return scrollableParentCache.get(element);
+            }
+
+            let parent = element;
+
+            while (parent && parent !== document.body) {
+                const style = window.getComputedStyle(parent);
+                const overflowY = style.getPropertyValue('overflow-y');
+
+                if (
+                    overflowY === 'auto' ||
+                    overflowY === 'scroll' ||
+                    overflowY === 'overlay'
+                ) {
+                    scrollableParentCache.set(element, parent);
+                    return parent;
+                }
+
+                parent = parent.parentElement;
+            }
+
+            scrollableParentCache.set(element, null);
+            return null;
+        }
+
+        function handleServerMessage(data) {
+            if (!data || typeof data !== 'object') return;
+
+            switch (data.type) {
+                case 'shopData':
+                    updateShopData(data);
+                    break;
+                case 'updateBalance':
+                    updateBalance(data.balance);
+                    break;
+            }
+        }
+
+        function updateShopData(data) {
+            state.batchUpdate(state => {
+                state.previousBalance = state.balance;
+                state.balance = data.balance || 0;
+                state.categories = data.categories || [];
+            });
+
+            UI.renderCategories(state.categories, state.currentCategory?.id);
+        }
+
+        function updateBalance(balance) {
+            state.balance = balance;
+        }
+
+        function updateBuyButtonStates() {
+            if (!DOM.itemsContainer) return;
+
+            const buyButtons = DOM.itemsContainer.querySelectorAll('.buy-button');
+            const items = state.searchResults ? state.searchResults.results : state.currentItems;
+
+            if (!items || items.length === 0 || buyButtons.length === 0) return;
+
+            const itemMap = new Map(items.map(item => [item.id, item]));
+
+            buyButtons.forEach(button => {
+                const itemElement = button.closest('.shop-item');
+                if (!itemElement) return;
+
+                const itemId = itemElement.getAttribute('data-item-id');
+                const item = itemMap.get(itemId);
+
+                if (item && item.buyPrice) {
+                    const canAfford = state.balance >= item.buyPrice;
+
+                    if (button.disabled !== !canAfford) {
+                        button.disabled = !canAfford;
+
+                        if (!canAfford) {
+                            button.setAttribute('data-tooltip', 'Not enough money');
+
+                            const tooltip = itemElement.querySelector('.item-description');
+                            if (tooltip) {
+                                const shortfallAmount = (item.buyPrice - state.balance).toFixed(2);
+                                tooltip.innerHTML = tooltip.innerHTML.replace(
+                                    /<span style="color: #ff6b6b">.*?<\/span><br>/,
+                                    `<span style="color: #ff6b6b">You need $${shortfallAmount} more</span><br>`
+                                );
+                            }
+                        } else {
+                            button.removeAttribute('data-tooltip');
+                        }
+                    }
+                }
+            });
+        }
+
+        async function loadCategory(categoryId) {
+            if (state.loading) return;
+
+            const category = state.categories.find(cat => cat.id === categoryId);
+            if (!category) return;
+
+            state.loading = true;
+            state.searchResults = null;
+            state.lastFocusedItem = null;
+            state.currentCategory = category;
+
+            UI.renderCategories(state.categories, categoryId);
+
+            if (DOM.itemsContainer) {
+                UI.showLoadingOverlay(DOM.itemsContainer, 'Loading items...');
+            }
+
+            if (DOM.searchInput) {
+                DOM.searchInput.value = '';
+            }
+
+            const loadingNotificationId = showNotification('Loading items...', 'success', true);
+
+            try {
+                const data = await ShopService.getCategoryItems(categoryId);
+
+                state.currentItems = data.items || [];
+                UI.renderItems(state.currentCategory.name, state.currentItems);
+
+                removeNotification(loadingNotificationId);
+                if (DOM.itemsContainer) {
+                    UI.removeLoadingOverlay(DOM.itemsContainer);
+                    DOM.itemsContainer.scrollTop = 0;
+                }
+            } catch (error) {
+                removeNotification(loadingNotificationId);
+                if (DOM.itemsContainer) {
+                    UI.removeLoadingOverlay(DOM.itemsContainer);
+                    DOM.itemsContainer.innerHTML = '<div class="empty-message">Failed to load items</div>';
+                }
+            } finally {
+                state.loading = false;
+            }
+        }
+
+        function applySearchFilters() {
+            const sortBy = state.dropdowns.sort.value;
+            const filterBy = state.dropdowns.filter.value;
+
+            let items = state.searchResults
+                ? [...state.searchResults.results]
+                : state.currentItems ? [...state.currentItems] : [];
+
+            if (items.length === 0) return;
+
+            if (filterBy !== 'all') {
+                if (filterBy === 'can-buy') {
+                    items = items.filter(item => item.buyPrice && state.balance >= item.buyPrice);
+                } else if (filterBy === 'can-sell') {
+                    items = items.filter(item => item.sellPrice && (item.playerQuantity || 0) > 0);
+                }
+            }
+
+            if (sortBy === 'name') {
+                items.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortBy === 'price-low') {
+                items.sort((a, b) => {
+                    const priceA = a.buyPrice !== undefined ? a.buyPrice : Infinity;
+                    const priceB = b.buyPrice !== undefined ? b.buyPrice : Infinity;
+                    return priceA - priceB;
+                });
+            } else if (sortBy === 'price-high') {
+                items.sort((a, b) => {
+                    const priceA = a.buyPrice !== undefined ? a.buyPrice : 0;
+                    const priceB = b.buyPrice !== undefined ? b.buyPrice : 0;
+                    return priceB - priceA;
+                });
+            }
+
+            if (state.searchResults) {
+                UI.renderSearchResults(state.searchResults.query, items);
+            } else if (state.currentCategory) {
+                UI.renderItems(state.currentCategory.name, items);
+            }
+        }
+
+        async function searchItems(query) {
+            if (state.loading || query.length < 2) return;
+
+            state.loading = true;
+            state.lastFocusedItem = null;
+
+            if (DOM.itemsContainer) {
+                UI.showLoadingOverlay(DOM.itemsContainer, 'Searching...');
+            }
+
+            const categoryItems = document.querySelectorAll('.category-item');
+            categoryItems.forEach(item => {
+                item.classList.remove('active');
+                item.setAttribute('aria-selected', 'false');
+            });
+
+            const loadingNotificationId = showNotification('Searching items...', 'success', true);
+
+            try {
+                const data = await ShopService.searchItems(query);
+
+                state.searchResults = data;
+                UI.renderSearchResults(query, data.results);
+
+                applySearchFilters();
+
+                removeNotification(loadingNotificationId);
+                if (DOM.itemsContainer) {
+                    UI.removeLoadingOverlay(DOM.itemsContainer);
+                    DOM.itemsContainer.scrollTop = 0;
+                }
+            } catch (error) {
+                removeNotification(loadingNotificationId);
+                if (DOM.itemsContainer) {
+                    UI.removeLoadingOverlay(DOM.itemsContainer);
+                    DOM.itemsContainer.innerHTML = '<div class="empty-message">Search failed</div>';
+                }
+            } finally {
+                state.loading = false;
+            }
+        }
+
+        async function processTransaction(type, categoryId, itemId, quantity) {
+            if (state.loading) return;
+
+            state.loading = true;
+
+            const loadingNotificationId = showNotification(
+                `Processing ${type}...`,
+                'success',
+                true
+            );
+
+            const service = type === 'purchase' ? ShopService.buyItem : ShopService.sellItem;
+            let success = false;
+
+            try {
+                const data = await service(categoryId, itemId, quantity);
+                success = data.success;
+
+                if (success) {
+                    updateBalance(data.newBalance);
+
+                    const action = type === 'purchase' ? 'purchased' : 'sold';
+                    const price = type === 'purchase' ?
+                        (data.item?.buyPrice || 0) :
+                        (data.item?.sellPrice || 0);
+
+                    const successMessage = `Successfully ${action} ${quantity} ${data.item ? data.item.name : 'item(s)'} for $${(quantity * price).toFixed(2)}`;
+                    showNotification(data.message || successMessage, 'success');
+
+                    if (state.searchResults) {
+                        searchItems(state.searchResults.query);
+                    } else if (state.currentCategory) {
+                        loadCategory(state.currentCategory.id);
+                    }
+                } else {
+                    showNotification(data.error || `Failed to ${type} item`, 'error');
+                }
+            } catch (error) {
+                if (state.currentCategory) {
+                    loadCategory(state.currentCategory.id);
+                }
+            } finally {
+                removeNotification(loadingNotificationId);
+                state.loading = false;
+            }
+
+            return success;
+        }
+
+        async function buyItem(categoryId, itemId, quantity) {
+            return processTransaction('purchase', categoryId, itemId, quantity);
+        }
+
+        async function sellItem(categoryId, itemId, quantity) {
+            return processTransaction('sale', categoryId, itemId, quantity);
+        }
+
+        let notificationTimers = new Map();
+
+        function showNotification(message, type, loading = false) {
+            const notificationId = generateUniqueId('notification');
+
+            const closeButton = loading ? '' : `<button class="notification-close" aria-label="Close notification">×</button>`;
+
+            const notificationHTML = `
+                <div id="${notificationId}" class="notification ${type}" role="alert">
+                    ${loading ? '<span class="loading-spinner"></span> ' : ''}${message}
+                    ${closeButton}
+                </div>
+            `;
+
+            DOM.notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
+
+            state.activeNotifications[notificationId] = {
+                id: notificationId,
+                type: type,
+                loading: loading,
+                message: message
+            };
+
+            if (!loading) {
+                const duration = type === 'success' ? NOTIFICATION_DURATION.SUCCESS : NOTIFICATION_DURATION.ERROR;
+
+                const timeoutId = setTimeout(() => {
+                    removeNotification(notificationId);
+                }, duration);
+
+                notificationTimers.set(notificationId, timeoutId);
+            }
+
+            return notificationId;
+        }
+
+        window.showNotification = showNotification;
+
+        function removeNotification(id) {
+            const notification = document.getElementById(id);
+
+            if (!notification) return;
+
+            notification.classList.add('removing');
+
+            setTimeout(() => {
+                if (notification && notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+
+            if (notificationTimers.has(id)) {
+                clearTimeout(notificationTimers.get(id));
+                notificationTimers.delete(id);
+            }
+
+            delete state.activeNotifications[id];
+        }
+
+        function clearNotifications() {
+            const notificationIds = Object.keys(state.activeNotifications);
+
+            notificationIds.forEach(id => {
+                removeNotification(id);
+            });
+        }
+
+        function backToCategories() {
+            state.searchResults = null;
+
+            if (DOM.searchInput) {
+                DOM.searchInput.value = '';
+            }
+
+            if (state.currentCategory) {
+                loadCategory(state.currentCategory.id);
+            } else {
+                if (DOM.itemsContainer) {
+                    DOM.itemsContainer.innerHTML = '<div class="empty-message">Select a category to view items</div>';
+                }
+            }
+        }
+
+        function cleanup() {
+            clearNotifications();
+
+            const modalWrapper = document.getElementById('modal-scale-wrapper');
+            if (modalWrapper) {
+                modalWrapper.remove();
+                state.modalOpen = false;
+            }
+
+            state.batchUpdate(s => {
+                s.activeNotifications = {};
+                s.currentItems = [];
+                s.searchResults = null;
+                s.currentCategory = null;
+                s.existingItemIds = new Set();
+                s.loading = false;
+            });
+
+            if (DOM.itemsContainer) {
+                UI.removeLoadingOverlay(DOM.itemsContainer);
+                DOM.itemsContainer.innerHTML = '<div class="empty-message">Select a category to view items</div>';
+            }
+
+            scrollableParentCache.clear();
+            UI._loadingOverlays.clear();
+        }
+
+        function closeShop() {
+            cleanup();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    })();
+</script>
+</body>
+</html>

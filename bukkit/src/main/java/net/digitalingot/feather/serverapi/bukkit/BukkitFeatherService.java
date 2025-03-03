@@ -14,16 +14,11 @@ import net.digitalingot.feather.serverapi.bukkit.waypoint.BukkitWaypointService;
 import org.jetbrains.annotations.NotNull;
 
 public class BukkitFeatherService implements FeatherService {
-  @NotNull
-  private final BukkitEventService eventService;
-  @NotNull
-  private final BukkitPlayerService playerService;
-  @NotNull
-  private final BukkitUIService uiService;
-  @NotNull
-  private final BukkitWaypointService waypointService;
-  @NotNull
-  private final BukkitMetaService metaService;
+  @NotNull private final BukkitEventService eventService;
+  @NotNull private final BukkitPlayerService playerService;
+  @NotNull private final BukkitUIService uiService;
+  @NotNull private final BukkitWaypointService waypointService;
+  @NotNull private final BukkitMetaService metaService;
 
   public BukkitFeatherService(
       @NotNull BukkitEventService eventService,

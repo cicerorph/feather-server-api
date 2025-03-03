@@ -9,6 +9,6 @@ include(
     "bukkit",
     //"bungee",
     //"velocity",
-    "examples:static",
-    "examples:bukkit"
+    "examples:shop",
+    "examples:shop-html",
 )

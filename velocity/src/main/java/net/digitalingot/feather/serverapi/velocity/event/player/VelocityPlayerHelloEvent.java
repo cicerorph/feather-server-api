@@ -34,7 +34,6 @@ public class VelocityPlayerHelloEvent extends VelocityFeatherEvent implements Pl
   @NotNull
   @Override
   public Collection<FeatherMod> getFeatherMods() {
-    System.out.println("Siema");
     return Collections.unmodifiableCollection(this.featherMods);
   }
 }

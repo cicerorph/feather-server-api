@@ -74,7 +74,7 @@ public class VelocityMetaService implements MetaService {
     ServerListBackground background = getServerListBackground();
     if (background != null) {
       ((VelocityFeatherPlayer) event.getPlayer())
-          .sendMessage(new S2CServerBackground(Action.HASH, background.hash()));
+          .sendMessage(new S2CServerBackground(Action.HASH, background.getHash()));
     }
   }
 }

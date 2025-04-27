@@ -114,7 +114,6 @@ public class VelocityMessagingService {
       case FORGE -> Platform.FORGE;
     };
 
-
     VelocityPlayerHelloEvent helloEvent =
         new VelocityPlayerHelloEvent(
             featherPlayer,

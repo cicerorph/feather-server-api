@@ -128,7 +128,7 @@ class PlayerMessageHandler implements ServerMessageHandler {
       if (serverListBackground != null) {
         this.player.sendMessage(
             new S2CServerBackground(S2CServerBackground.Action.DATA,
-                serverListBackground.image()));
+                serverListBackground.getImage()));
         this.sentServerListBackground = true;
       }
     }

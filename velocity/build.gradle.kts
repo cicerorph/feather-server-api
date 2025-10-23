@@ -23,3 +23,16 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":messaging"))
 }
+
+tasks.withType<Jar> {
+    archiveBaseName.set("feather-server-api")
+    archiveClassifier.set("velocity")
+}
+
+tasks.jar {
+    enabled = false
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
+}
